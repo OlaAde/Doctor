@@ -1,0 +1,115 @@
+{
+  "project_info": {
+    "project_number": "789685703334",
+    "firebase_url": "https://dokita-c3d87.firebaseio.com",
+    "project_id": "dokita-c3d87",
+    "storage_bucket": "dokita-c3d87.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789685703334:android:5be638c0ff63d313",
+        "android_client_info": {
+          "package_name": "com.work.adeogo.dokita"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789685703334-pp171qmcqhnjvba4t7hl9tcs0lkig1qe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.work.adeogo.dokita",
+            "certificate_hash": "115c92015b11e0f3dfe0db3f1b887cca9d89c54f"
+          }
+        },
+        {
+          "client_id": "789685703334-g5mtuvli9k4r6c10m3r1elv30932b7a1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.work.adeogo.dokita",
+            "certificate_hash": "c8e31f358d6fa86821faa05fe80f4bd16cd8f4b2"
+          }
+        },
+        {
+          "client_id": "789685703334-v3hlakeipa20c3jpgnrokddud3rellln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.work.adeogo.dokita",
+            "certificate_hash": "f8c1a2c0e07c462917c507167b50bdba807ba3ba"
+          }
+        },
+        {
+          "client_id": "789685703334-2328r241r85mn19u6h82gc582r1ohcia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBht56f0ARVdDpdMxV9AGuOtT6-hBkt2AQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789685703334-2328r241r85mn19u6h82gc582r1ohcia.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789685703334:android:9e3c5bfea44030b3",
+        "android_client_info": {
+          "package_name": "com.works.adeogo.doctor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789685703334-8g3ekrfkksd3abht9uoj5nfi09vs9ing.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.works.adeogo.doctor",
+            "certificate_hash": "ffad1658e4f62a6592cd08e1f632cd6c3dc6e890"
+          }
+        },
+        {
+          "client_id": "789685703334-2328r241r85mn19u6h82gc582r1ohcia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBht56f0ARVdDpdMxV9AGuOtT6-hBkt2AQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789685703334-2328r241r85mn19u6h82gc582r1ohcia.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.works.adeogo.doctor.SettingsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edtSettingsName"
+                android:layout_marginBottom="5dp"
+                android:hint="Name"
+                android:inputType="textCapWords"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                app:met_floatingLabel="highlight"
+                app:met_baseColor="@color/colorPrimary"
+                app:met_singleLineEllipsis="true"
+                app:met_primaryColor="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edtSettingsNumber"
+                android:layout_marginBottom="5dp"
+                android:hint="Phone Number"
+                android:inputType="phone"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                app:met_floatingLabel="highlight"
+                app:met_baseColor="@color/colorPrimary"
+                app:met_singleLineEllipsis="true"
+                app:met_primaryColor="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edtSettingsLow"
+                android:layout_marginBottom="5dp"
+                android:hint="Lowest Charge"
+                android:inputType="number"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                app:met_floatingLabel="highlight"
+                app:met_baseColor="@color/colorPrimary"
+                app:met_singleLineEllipsis="true"
+                app:met_primaryColor="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edtSettingsHighest"
+                android:layout_marginBottom="5dp"
+                android:hint="Highest Charge"
+                android:inputType="number"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                app:met_floatingLabel="highlight"
+                app:met_baseColor="@color/colorPrimary"
+                app:met_singleLineEllipsis="true"
+                app:met_primaryColor="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edtSettingsSpecial"
+                android:layout_marginBottom="5dp"
+                android:hint="Special Charge"
+                android:inputType="textCapWords"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                app:met_floatingLabel="highlight"
+                app:met_baseColor="@color/colorPrimary"
+                app:met_singleLineEllipsis="true"
+                app:met_primaryColor="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="Test"/>
+    </LinearLayout>
+
+
+</ScrollView>

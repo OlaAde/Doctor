@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string-array name="countries">
+        <item>Select</item>
+        <item>Uganda</item>
+        <item>Nigeria</item>
+        <item>Russia</item>
+    </string-array>
+
+    <string-array name="ugandan_cities">
+        <item>Select</item>
+        <item>Mbarara</item>
+        <item>Entebbe</item>
+        <item>Kampala</item>
+        <item>Gulu</item>
+        <item>Wakiso</item>
+    </string-array>
+
+    <string-array name="nigerian_cities">
+        <item>Select</item>
+        <item>Warri</item>
+        <item>Abuja</item>
+        <item>Lagos</item>
+        <item>Ado-Ekiti</item>
+    </string-array>
+
+    <string-array name="russian_cities">
+        <item>Select</item>
+        <item>Kazan</item>
+        <item>Moscow</item>
+    </string-array>
+
+    <string-array name="specialities">
+        <item>Select</item>
+        <item>Cardiologist</item>
+        <item>Dentist</item>
+        <item>Dermatologist</item>
+        <item>Diabetologist</item>
+        <item>Digestive surgeon</item>
+        <item>General Physiciain</item>
+        <item>General Surgeon</item>
+        <item>Geneticist</item>
+        <item>Gynecologist</item>
+        <item>Herpetologist</item>
+        <item>Oncologist</item>
+        <item>Ophthalmologist</item>
+        <item>Paediatrician</item>
+        <item>Plastic Surgeon</item>
+        <item>Veterinarian</item>
+    </string-array>
+</resources>
