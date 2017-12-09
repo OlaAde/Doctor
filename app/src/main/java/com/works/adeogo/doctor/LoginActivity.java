@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                 .setFontAttrId(R.attr.fontPath)
                 .build());
         setContentView(R.layout.activity_login);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
