@@ -8,7 +8,7 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class FirebaseUtils {
-    public static DatabaseReference getNotificationRef(){
-        return FirebaseDatabase.getInstance().getReference("notifications").push();
+    public static DatabaseReference getNotificationRef(String receiverId){
+        return FirebaseDatabase.getInstance().getReference("Notifications").child(receiverId).push();
     }
 }

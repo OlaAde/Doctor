@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,9 +22,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -42,7 +46,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE = 90;
     private static final int RC_PHOTO_PICKER = 12;
-    private Button btnSignIn, btnRegister;
+    private Button btnSignIn ;
+    private TextView btnRegister;
     private RelativeLayout mRelativeLayout;
 
     private FirebaseAuth mFirebaseAuth;
@@ -50,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseReference;
     private DatabaseReference mAllDatabaseReference;
 
-    private TextView mRiderTextView;
+    private TextView mRiderTextView, mForgotPsd;
     private ImageView mPhotoPickerImageView;
 
     private String mPhotoUrl = "the_url";
@@ -58,7 +63,8 @@ public class LoginActivity extends AppCompatActivity {
     private String mSpeciality;
     private String mCity;
     private int country_chooser_int = 0;
-
+    private MaterialEditText edtEmail;
+    private MaterialEditText edtPassword;
 
     private ArrayAdapter<CharSequence> mCityAdapter = null;
 
@@ -76,6 +82,10 @@ public class LoginActivity extends AppCompatActivity {
                 .setFontAttrId(R.attr.fontPath)
                 .build());
         setContentView(R.layout.activity_login);
+
+        edtEmail = findViewById(R.id.edtEmail);
+        edtPassword = findViewById(R.id.edtPassword);
+        mForgotPsd = findViewById(R.id.txt_view_pwd);
 
         btnSignIn = findViewById(R.id.btnSignIn);
         btnRegister = findViewById(R.id.btnRegister);
@@ -105,6 +115,70 @@ public class LoginActivity extends AppCompatActivity {
                 showLoginDialog();
             }
         });
+
+        mForgotPsd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogForgetPwd();
+            }
+        });
+    }
+
+    private void showDialogForgetPwd() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
+        alertDialog.setTitle("FORGOT PASSWORD");
+        alertDialog.setMessage("Please enter your email address");
+
+        LayoutInflater inflater = LayoutInflater.from(LoginActivity.this);
+        View forgot_pwd_layout = inflater.inflate(R.layout.layout_pwd, null);
+
+        final MaterialEditText edtEmail = forgot_pwd_layout.findViewById(R.id.edtEmail);
+        alertDialog.setView(forgot_pwd_layout);
+
+        //setButton
+        alertDialog.setPositiveButton("RESET", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialogInterface, int i) {
+                final android.app.AlertDialog waitingDialog = new SpotsDialog(LoginActivity.this);
+                if (TextUtils.isEmpty(edtEmail.getText().toString())){
+                    Snackbar.make(mRelativeLayout, "Please enter email", Snackbar.LENGTH_SHORT)
+                            .show();
+                    return;
+                }
+
+                waitingDialog.show();
+
+                mFirebaseAuth.sendPasswordResetEmail(edtEmail.getText().toString().trim())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                dialogInterface.dismiss();
+                                waitingDialog.dismiss();
+
+                                Snackbar.make(mRelativeLayout, "Reset password link has been sent", Snackbar.LENGTH_LONG)
+                                        .show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        dialogInterface.dismiss();
+                        waitingDialog.dismiss();
+
+                        Snackbar.make(mRelativeLayout, "Failed " + e.getMessage(), Snackbar.LENGTH_LONG)
+                                .show();
+                    }
+                });
+            }
+        });
+
+        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 
     private void goPlay()
@@ -125,25 +199,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showLoginDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("SIGN IN");
-        alertDialog.setMessage("Please use email to sign in");
 
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View login_layout = inflater.inflate(R.layout.layout_login, null);
-
-        final MaterialEditText edtEmail = login_layout.findViewById(R.id.edtEmail);
-        final MaterialEditText edtPassword = login_layout.findViewById(R.id.edtPassword);
-
-        alertDialog.setView(login_layout);
-
-        alertDialog.setPositiveButton("SIGN IN", new DialogInterface.OnClickListener() {
+        btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-
+            public void onClick(View view) {
                 //Set disable button Sign In if is processing
-                btnSignIn.setEnabled(false);
+
                 if (TextUtils.isEmpty(edtEmail.getText().toString())){
                     Snackbar.make(mRelativeLayout, "Please enter email address", Snackbar.LENGTH_SHORT)
                             .show();
@@ -182,75 +243,5 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-                btnSignIn.setEnabled(true);
-            }
-        });
-
-        alertDialog.show();
     }
-
-
-
-    private void showRegisterDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("REGISTER");
-        alertDialog.setMessage("Please use email to register");
-
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View register_layout = inflater.inflate(R.layout.layout_register, null);
-
-
-        mPhotoPickerImageView = register_layout.findViewById(R.id.imvPickImage);
-
-//        mPhotoTextView = register_layout.findViewById(R.id.tvPickPhoto);
-
-
-        mPhotoPickerImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
-            }
-        });
-
-
-        alertDialog.setView(register_layout);
-
-        alertDialog.setPositiveButton("REGISTER", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-
-
-
-
-
-
-                final android.app.AlertDialog waitingDialog = new SpotsDialog(LoginActivity.this);
-                waitingDialog.show();
-
-
-            }
-        });
-
-        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-
-        alertDialog.show();
-    }
-
-
 }

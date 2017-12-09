@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_hot_deal_actvity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/first"
+    tools:context=".FirstActivity">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/first_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:layout_gravity="top"
+        android:layout_marginBottom="40dp"
+        android:scrollbars="none">
+    </android.support.v4.view.ViewPager>
+
+    <com.gigamole.navigationtabstrip.NavigationTabStrip
+        android:id="@+id/nav_strip"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:nts_color="#000"
+        app:nts_size="15sp"
+        app:nts_weight="3dp"
+        app:nts_factor="2.5"
+        app:nts_titles="@array/titles"
+        app:nts_type="point"
+        app:nts_gravity="top"
+        app:nts_typeface="fonts/typeface.otf"
+        app:nts_corners_radius="1.5dp"
+        app:nts_animation_duration="300"
+        app:nts_active_color="#000"
+        app:nts_inactive_color="#c4c4c4"/>
+
+    <TextView
+        android:id="@+id/content"
+        android:textColor="@android:color/white"
+        tools:text="Here we are"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:layout_margin="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"/>
+    <TextView
+        android:id="@+id/previous"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_previous"/>
+
+    <TextView
+        android:id="@+id/next"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:layout_margin="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_next"/>
+</RelativeLayout>

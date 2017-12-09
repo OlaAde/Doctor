@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -259,6 +260,12 @@ public class SettingsActivity extends AppCompatActivity {
             mProfileDatabaseReference.push().setValue(doctorProfile).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
+                    FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                    if(user!=null) {
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(mDoctorName).build();
+                        user.updateProfile(profileUpdates);
+                    }
                     mWaitingDialog.dismiss();
                     finish();
                     Toast.makeText(SettingsActivity.this, "Profile Updated!", Toast.LENGTH_SHORT).show();
@@ -269,10 +276,4 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void Test(View view) {
-        Notification notification = new Notification("Dipo", "hdbhcbd", "@.com", userId, "Hello Ore mi", userId);
-
-        FirebaseUtils.getNotificationRef().setValue(notification);
-        FirebaseMessaging.getInstance().subscribeToTopic(userId);
-    }
 }

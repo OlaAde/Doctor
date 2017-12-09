@@ -49,4 +49,10 @@
         <item>Plastic Surgeon</item>
         <item>Veterinarian</item>
     </string-array>
+
+    <string-array name="titles">
+        <item>Nav</item>
+        <item>Tab</item>
+        <item>Strip</item>
+    </string-array>
 </resources>

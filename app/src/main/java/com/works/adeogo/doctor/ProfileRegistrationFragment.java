@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -71,6 +72,7 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
     private Spinner mCitySpinner;
     private ArrayAdapter<CharSequence> mCityAdapter = null;
     private LinearLayout mCityLinearLayout;
+    private ScrollView scrollView;
 
     public ProfileRegistrationFragment() {
         // Required empty public constructor
@@ -85,6 +87,7 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         mLinearlayout = view.findViewById(R.id.second_fragment_ll);
 
         mCountrySpinner = view.findViewById(R.id.imvPickCountry);
+        scrollView = view.findViewById(R.id.scrollview_profile);
         mSpecialitySpinner = view.findViewById(R.id.imvSelectSpeciality);
         mCitySpinner = view.findViewById(R.id.imvPickCity);
         mCityLinearLayout = view.findViewById(R.id.llPickCity);
@@ -99,7 +102,6 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
                 intent.setType("image/jpeg");
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
 //                mProgressBar.setVisibility(View.VISIBLE);
-                mPickImageV.setVisibility(View.INVISIBLE);
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
             }
         });
@@ -276,6 +278,13 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
 
     public void setCitySpinners(LinearLayout CityLinearLayout, Spinner spinner) {
         CityLinearLayout.setVisibility(View.VISIBLE);
+
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        });
 
         if(country_chooser_int  == 1 ){
             mCityAdapter = ArrayAdapter.createFromResource(getActivity(),

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/support_main"
+    android:orientation="vertical"
+    tools:context="com.works.adeogo.doctor.SupportActivity"
+    >
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:layout_margin="15dp"
+        android:id="@+id/edtSubject"
+        android:hint="Please enter subject"
+        android:inputType="text"
+        android:textColor="@color/colorPrimary"
+        android:textColorHint="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        app:met_floatingLabel="highlight"
+        app:met_baseColor="@color/colorPrimary"
+        app:met_singleLineEllipsis="true"
+        app:met_primaryColor="@color/colorPrimary"/>
+
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:layout_margin="15dp"
+        android:id="@+id/edtProblemDisc"
+        android:hint="Please describe your problem"
+        android:inputType="text"
+        android:textColor="@color/colorPrimary"
+        android:textColorHint="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        app:met_floatingLabel="highlight"
+        app:met_baseColor="@color/colorPrimary"
+        app:met_singleLineEllipsis="true"
+        app:met_primaryColor="@color/colorPrimary"/>
+
+</LinearLayout>

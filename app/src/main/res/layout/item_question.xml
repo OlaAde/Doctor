@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="7dp"
+
             android:orientation="vertical"
             android:background="@color/blue1">
 
@@ -36,6 +37,7 @@
                 android:layout_below="@+id/youQuestionMessageTextView"
                 android:layout_weight="0"
                 android:maxWidth="250dp"
+                android:visibility="gone"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 tools:text="Name"
                 android:layout_alignRight="@+id/youQuestionMessageTextView"/>
@@ -73,6 +75,7 @@
                 android:id="@+id/questionNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:layout_below="@+id/questionMessageTextView"
                 android:layout_weight="0"
                 android:maxWidth="250dp"

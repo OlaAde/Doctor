@@ -178,6 +178,7 @@ public class MessagesFragment extends Fragment implements ListAdapter.ListAdapte
         Intent intent = new Intent(getActivity(), QuestionActivity.class);
         ChatHead chatHead = list.get(adapterPosition);
         intent.putExtra("client_id", chatHead.getUserId());
+        intent.putExtra("client_name", chatHead.getUserName());
         startActivity(intent);
     }
 }

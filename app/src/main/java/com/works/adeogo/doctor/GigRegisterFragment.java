@@ -22,9 +22,12 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.Step;
@@ -141,8 +144,16 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
                                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                                     @Override
                                     public void onSuccess(AuthResult authResult) {
+
+                                        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                                        if(user!=null) {
+                                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                    .setDisplayName(mName).build();
+                                            user.updateProfile(profileUpdates);
+                                        }
+
                                         waitingDialog.dismiss();
-                                        Intent intent = new Intent(activity, MainActivity.class);
+                                        Intent intent = new Intent(mContext, MainActivity.class);
                                         startActivity(intent);
                                         activity.finish();
                                     }
@@ -174,19 +185,20 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
 
                         mDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/"  +userId + "/profile/profile");
                         mAllDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" + "all_profiles/" + userId );
-                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Notifications");
-                        databaseReference.child("token").setValue(FirebaseInstanceId.getInstance().getToken());
+
+
+                        FirebaseMessaging.getInstance().subscribeToTopic(userId);
 
                         mDatabaseReference.push().setValue(doctorProfile)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(mContext, "Registered successfully !!!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(activity, MainActivity.class);
+                                        Intent intent = new Intent(mContext, MainActivity.class);
                                         if (mContext != null){
                                             startActivity(intent);
                                         }else {
-                                            Intent intent1 = new Intent(activity, MainActivity.class);
+                                            Intent intent1 = new Intent(mContext, MainActivity.class);
                                             startActivity(intent1);
                                         }
 
@@ -202,14 +214,15 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
                                     }
                                 });
 
-                        mAllDatabaseReference.push().setValue(doctorProfile)
+                        mAllDatabaseReference.setValue(doctorProfile)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
 
                                         Toast.makeText(mContext, "Registered successfully !!!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(activity, MainActivity.class);
+                                        Intent intent = new Intent(mContext, MainActivity.class);
                                         startActivity(intent);
+                                        activity.finish();
                                         waitingDialog.dismiss();
                                         activity.finish();
                                     }

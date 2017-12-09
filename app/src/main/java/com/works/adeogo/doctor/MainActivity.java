@@ -1,9 +1,13 @@
 package com.works.adeogo.doctor;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -12,6 +16,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,6 +27,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -28,14 +40,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
+import com.works.adeogo.doctor.model.DoctorProfile;
 import com.works.adeogo.doctor.model.Notification;
 import com.works.adeogo.doctor.utils.FirebaseUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import dmax.dialog.SpotsDialog;
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -43,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String userId;
     public static final String ANONYMOUS = "anonymous";
-    private String mUsername;
+    private String mUsername, mEmail, mPassword;
+    private CoordinatorLayout mMainLayout;
 
     public static final int RC_SIGN_IN = 1;
     private FirebaseAuth mFirebaseAuth;
@@ -53,10 +70,11 @@ public class MainActivity extends AppCompatActivity {
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mChatDatabaseReference;
-    private ChildEventListener mChildEventListener;
+    private DatabaseReference mDeleteDatabaseReference, mAllDatabaseReference;
 
     private List<String> mChatList = new ArrayList<>();
+    private ChildEventListener mChildEventListener;
+    private DoctorProfile mDoctorProfile;
 
 
     /**
@@ -76,12 +94,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/Arkhip_font.ttf")
+                .setDefaultFontPath("fonts/open_sans_semibold.ttf")
                 .setFontAttrId(R.attr.fontPath)
                 .build());
 
         setContentView(R.layout.activity_main);
 
+        mMainLayout = findViewById(R.id.main_content);
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
@@ -93,16 +112,17 @@ public class MainActivity extends AppCompatActivity {
                     // User is signed in
                     userId = user.getUid();
                     FirebaseMessaging.getInstance().subscribeToTopic(userId);
-                    mChatDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" +userId + "/chats");
+                    mAllDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" + "all_profiles/" + userId );
+                    mDeleteDatabaseReference = mFirebaseDatabase.getReference().child("deleted").child("doctors").child(userId);
                     onSignedInInitialize(user.getDisplayName());
                 } else {
                     // User is signed out
-                    onSignedOutCleanup();
                     Intent intent = new Intent(MainActivity.this, ActivityRegister.class);
                     startActivity(intent);
                 }
             }
         };
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Create the adapter that will return a fragment for each of the three
@@ -120,42 +140,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-    private void onSignedInInitialize(String username) {
-        mUsername = username;
-        attachDatabaseReadListener();
-    }
-
-    private void onSignedOutCleanup() {
-        mUsername = ANONYMOUS;
-        detachDatabaseReadListener();
-    }
-
-    private void attachDatabaseReadListener() {
-        if (mChildEventListener == null) {
-            mChildEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    String chat = dataSnapshot.getValue(String.class);
-                    mChatList.add(chat);
-
-                }
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-                public void onChildRemoved(DataSnapshot dataSnapshot) {}
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-                public void onCancelled(DatabaseError databaseError) {}
-            };
-            mChatDatabaseReference.addChildEventListener(mChildEventListener);
-        }
-    }
-
-    private void detachDatabaseReadListener() {
-        if (mChildEventListener != null) {
-            mChatDatabaseReference.removeEventListener(mChildEventListener);
-            mChildEventListener = null;
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -169,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         if (mAuthStateListener != null) {
             mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
         }
+
         detachDatabaseReadListener();
     }
     @Override
@@ -192,16 +177,133 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_support) {
+            Intent intent = new Intent(MainActivity.this, SupportActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if (id == R.id.action_logout) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("LOGOUT");
+            alertDialog.setMessage("Want to Logout?");
+            alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                alertDialog.setTitle("DELETE ACCOUNT");
+                alertDialog.setMessage("Every reference to this account will be deleted!");
+
+                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                alertDialog.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    final android.app.AlertDialog waitingDialog = new SpotsDialog(MainActivity.this);
+                    waitingDialog.show();
+
+                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                    ref.child("new_doctors").child(userId).removeValue();
+                    ref.child("new_doctors").child("all_profiles").child(userId).removeValue();
+                    mDeleteDatabaseReference.push().setValue(userId);
+                    AuthCredential credential = EmailAuthProvider
+                            .getCredential(mEmail ,mPassword);
+
+                    // Prompt the user to re-provide their sign-in credentials
+                    user.reauthenticate(credential)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                            user.delete()
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                                    ref.child("new_doctors").child(userId).removeValue();
+
+                                    if (task.isSuccessful()) {
+                                        waitingDialog.dismiss();
+                                        Snackbar.make(mMainLayout, "Account deleted!", Snackbar.LENGTH_LONG).show();
+                                        mFirebaseAuth.signOut();
+                                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                        startActivity(intent);                                                            }
+                                }
+                                });
+
+                            }
+                        });
+                    }
+                });
+                alertDialog.show();
+                }
+            });
+
+            alertDialog.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+
+            alertDialog.setNegativeButton("Logout", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    mFirebaseAuth.signOut();
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            alertDialog.show();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
-    public void Trial(View view) {
+    private void onSignedInInitialize(String username) {
+        mUsername = username;
+        attachDatabaseReadListener();
+    }
 
-        Notification notification = new Notification("Adei", "bnmndk.com", "iijsiejsi2@gmail.com", userId, "Trying the notif out", userId );
+    private void onSignedOutCleanup() {
+        mUsername = ANONYMOUS;
+        detachDatabaseReadListener();
+    }
 
-        Toast.makeText(this, "Sent!", Toast.LENGTH_SHORT).show();
-        FirebaseUtils.getNotificationRef().setValue(notification);
-        FirebaseMessaging.getInstance().subscribeToTopic(userId);
+    private void attachDatabaseReadListener() {
+        if (mChildEventListener == null) {
+            mChildEventListener = new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if (TextUtils.equals(dataSnapshot.getKey(), "email")){
+                        mEmail = dataSnapshot.getValue(String.class);
+                    }
+                    if (TextUtils.equals(dataSnapshot.getKey(), "password")){
+                        mPassword = dataSnapshot.getValue().toString();
+                    }
+                }
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+                public void onChildRemoved(DataSnapshot dataSnapshot) {}
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+                public void onCancelled(DatabaseError databaseError) {}
+            };
+            mAllDatabaseReference.addChildEventListener(mChildEventListener);
+        }
+    }
+
+    private void detachDatabaseReadListener() {
+        if (mChildEventListener != null) {
+            mAllDatabaseReference.removeEventListener(mChildEventListener);
+            mChildEventListener = null;
+        }
     }
 
     /**

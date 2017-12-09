@@ -14,10 +14,8 @@ public class Notification {
 
     public Notification(){}
 
-    public Notification(String username, String imageUrl, String email, String uid, String text, String topic){
+    public Notification(String username, String uid, String text, String topic){
         this.username = username;
-        this.imageUrl = imageUrl;
-        this.email = email;
         this.uid = uid;
         this.text = text;
         this.topic = topic;

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,8 +26,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.works.adeogo.doctor.adapters.QuestionAdapter;
+import com.works.adeogo.doctor.model.Notification;
 import com.works.adeogo.doctor.model.Question;
+import com.works.adeogo.doctor.utils.FirebaseUtils;
 import com.works.adeogo.doctor.utils.NetworkUtils;
 
 import java.util.ArrayList;
@@ -57,10 +61,10 @@ public class QuestionActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
-    public static final String ANONYMOUS = "anonymous";
 
     public static final int RC_SIGN_IN = 1;
     private String mUsername;
+    private String mClientName;
     private String userId;
     private String mClientId;
 
@@ -80,11 +84,13 @@ public class QuestionActivity extends AppCompatActivity {
                 .build());
 
         setContentView(R.layout.activity_question);
+
         getSupportActionBar().setTitle("Question");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         mClientId = intent.getStringExtra("client_id");
+        mClientName = intent.getStringExtra("client_name");
 
         mSendLinearLayout = (LinearLayout) findViewById(R.id.questionLinearLayout);
         mNoInternetTextView = (TextView) findViewById(R.id.questionNoInternetTextView);
@@ -152,8 +158,6 @@ public class QuestionActivity extends AppCompatActivity {
             noInternet();
         }
 
-//        mAdapter.swapData(mQuestionList);
-
         // Send button sends a message and clears the EditText
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -162,6 +166,17 @@ public class QuestionActivity extends AppCompatActivity {
                     Question question = new Question(mQuestionEditText.getText().toString().trim(), mUsername, 0);
                     mDatabaseReference.push().setValue(question);
                     mClientDatabaseReference.push().setValue(question);
+
+                    Notification notification = new Notification();
+                    notification.setText(mQuestionEditText.getText().toString().trim());
+                    notification.setTopic(mClientId);
+                    notification.setUid(userId);
+                    notification.setUsername(mUsername);
+
+                    FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
+
+                    FirebaseMessaging.getInstance().subscribeToTopic(userId);
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(mClientId);
                     // Clear input box
                     mQuestionEditText.setText("");
                 }else {
@@ -177,7 +192,6 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
     private void onSignedOutCleanup() {
-        mUsername = ANONYMOUS;
         detachDatabaseReadListener();
     }
 
@@ -187,7 +201,6 @@ public class QuestionActivity extends AppCompatActivity {
 
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
                     Question question = dataSnapshot.getValue(Question.class);
                     if (TextUtils.equals(question.getName(), mUsername)){
                         question.setYou(0);

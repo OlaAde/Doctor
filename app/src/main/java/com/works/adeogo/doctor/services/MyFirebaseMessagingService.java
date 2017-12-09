@@ -1,14 +1,17 @@
 package com.works.adeogo.doctor.services;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.works.adeogo.doctor.MainActivity;
+import com.works.adeogo.doctor.QuestionActivity;
 import com.works.adeogo.doctor.R;
 
 import java.util.Map;
@@ -33,18 +36,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Map<String, String> data = remoteMessage.getData();
 
             String username = data.get(USERNAME);
-            String imageUrl = data.get(IMAGEURL);
-            String email = data.get(EMAIL);
             String uid = data.get(UID);
             String text = data.get(TEXT);
 
+
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-            mBuilder.setSmallIcon(R.mipmap.ic_launcher);
+            mBuilder.setSmallIcon(R.drawable.icon_doctor);
 
             mBuilder.setContentTitle(username);
             mBuilder.setContentText(text);
 
-            Intent resultIntent = new Intent(this, MainActivity.class);
+            Intent resultIntent = new Intent(this, QuestionActivity.class);
+            resultIntent.putExtra("client_id", uid);
+            resultIntent.putExtra("client_name", username);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 
             stackBuilder.addNextIntent(resultIntent);
@@ -53,7 +57,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-            mNotificationManager.notify(0, mBuilder.build());
+            Notification notification = mBuilder.build();
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            mNotificationManager.notify(0, notification);
         }
     }
 }
