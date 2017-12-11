@@ -36,6 +36,8 @@ public class SupportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_support);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         mDetailsEditText = findViewById(R.id.edtProblemDisc);
         mSubjectEditText = findViewById(R.id.edtSubject);
         mMainLayout = findViewById(R.id.support_main);
