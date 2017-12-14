@@ -90,4 +90,6 @@
     <string name="action_logout">Logout</string>
     <string name="action_support">Contact Us</string>
     <string name="action_contact_us">Contact Us</string>
+    <string name="action_decline">Decline</string>
+    <string name="action_accept">Accept</string>
 </resources>

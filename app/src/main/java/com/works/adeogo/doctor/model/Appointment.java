@@ -4,19 +4,11 @@ package com.works.adeogo.doctor.model;
  * Created by Adeogo on 10/24/2017.
  */
 
+
 public class Appointment {
-    private String UserId;
-    private String DoctorId;
-    private String Time;
-    private int AcceptanceStatus;
-    private int CompletionStatus;
-    private int Year;
-    private int Month;
-    private int Day;
-    private String Description;
-    private String DoctorName;
-    private String ClientName;
-    private String Location;
+    private String UserId, DoctorId, Time, DoctorPhone, ClientPhone, DoctorName, ClientName, Location, Message;
+    private int Year, Month, Day, Status;
+
 
     public String getLocation() {
         return Location;
@@ -29,32 +21,33 @@ public class Appointment {
     public Appointment(){
     }
 
-    public Appointment(String location) {
-
-    }
-
-    public Appointment(String userId, String doctorId, String time, int acceptanceStatus, int completionStatus, int year, int month,
-                       int day, String description, String doctorName, String clientName, String location){
+    public Appointment(String userId, String doctorId, String time, int year, int month,
+                       int day, String doctorPhone, String clientPhone, String doctorName, String clientName, String location, int status, String message){
         UserId = userId;
         DoctorId = doctorId;
         Time = time;
-        AcceptanceStatus = acceptanceStatus;
-        CompletionStatus = completionStatus;
         Year = year;
         Month = month;
         Day = day;
-        Description = description;
+        DoctorPhone = doctorPhone;
+        ClientPhone = clientPhone;
         DoctorName = doctorName;
         ClientName = clientName;
         Location = location;
+        Status = status;
+        Message = message;
+    }
+
+    public void setMessage(String message) {
+        Message = message;
+    }
+
+    public void setStatus(int status) {
+        Status = status;
     }
 
     public void setClientName(String clientName) {
         ClientName = clientName;
-    }
-
-    public void setAcceptanceStatus(int acceptanceStatus) {
-        AcceptanceStatus = acceptanceStatus;
     }
 
     public void setDoctorId(String doctorId) {
@@ -65,16 +58,16 @@ public class Appointment {
         UserId = userId;
     }
 
-    public void setCompletionStatus(int completionStatus) {
-        CompletionStatus = completionStatus;
-    }
-
     public void setDay(int day) {
         Day = day;
     }
 
-    public void setDescription(String description) {
-        Description = description;
+    public void setClientPhone(String clientPhone) {
+        ClientPhone = clientPhone;
+    }
+
+    public void setDoctorPhone(String doctorPhone) {
+        DoctorPhone = doctorPhone;
     }
 
     public void setMonth(int month) {
@@ -91,14 +84,6 @@ public class Appointment {
 
     public void setYear(int year) {
         Year = year;
-    }
-
-    public int getAcceptanceStatus() {
-        return AcceptanceStatus;
-    }
-
-    public int getCompletionStatus() {
-        return CompletionStatus;
     }
 
     public String getDoctorId() {
@@ -133,7 +118,19 @@ public class Appointment {
         return ClientName;
     }
 
-    public String getDescription() {
-        return Description;
+    public String getClientPhone() {
+        return ClientPhone;
+    }
+
+    public String getDoctorPhone() {
+        return DoctorPhone;
+    }
+
+    public int getStatus() {
+        return Status;
+    }
+
+    public String getMessage() {
+        return Message;
     }
 }

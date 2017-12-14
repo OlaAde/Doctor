@@ -33,6 +33,8 @@
 
     <string-array name="specialities">
         <item>Select</item>
+        <item>Nurse</item>
+        <item>Gen Health Professional</item>
         <item>Cardiologist</item>
         <item>Dentist</item>
         <item>Dermatologist</item>

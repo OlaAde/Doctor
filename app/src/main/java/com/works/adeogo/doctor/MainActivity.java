@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
     private List<String> mChatList = new ArrayList<>();
     private ChildEventListener mChildEventListener;
     private DoctorProfile mDoctorProfile;
+    private boolean mStart = false;
 
 
     /**
@@ -138,6 +139,12 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
+        Intent intent = getIntent();
+        mStart = intent.getBooleanExtra("start", false);
+
+        if (mStart){
+            mViewPager.setCurrentItem(1);
+        }
     }
 
     @Override

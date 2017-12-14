@@ -107,7 +107,7 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         });
         mResultImageV = view.findViewById(R.id.imvFinalImage);
         mFirebaseStorage = FirebaseStorage.getInstance();
-        mProfilePhotosStorageReference = mFirebaseStorage.getReference().child("profile_photos");
+        mProfilePhotosStorageReference = mFirebaseStorage.getReference().child("doctors").child("profile_photos");
 
         ArrayAdapter<CharSequence> mCountryAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.countries, android.R.layout.simple_spinner_item);

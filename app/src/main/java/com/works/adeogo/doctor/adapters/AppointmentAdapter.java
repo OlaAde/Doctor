@@ -1,6 +1,7 @@
 package com.works.adeogo.doctor.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.works.adeogo.doctor.R;
 import com.works.adeogo.doctor.model.Appointment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,12 +39,14 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         public final TextView mClientNameTextView;
         public final TextView mLocationTextView;
         public final TextView mDateTextView;
+        public final CardView mAppointmentCardVIew;
 
         public AppointmentAdapterViewHolder(View itemView) {
             super(itemView);
             mClientNameTextView = (TextView) itemView.findViewById(R.id.itemClientName);
             mLocationTextView = (TextView) itemView.findViewById(R.id.itemLocation);
             mDateTextView = (TextView) itemView.findViewById(R.id.itemDate);
+            mAppointmentCardVIew = itemView.findViewById(R.id.appointmentCardView);
 
             itemView.setOnClickListener(this);
         }
@@ -68,6 +72,8 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         String ClientName = null;
         String Location = null;
         String Date = null;
+        int status = -1;
+
 
         if (mList != null) {
             Appointment appointment = mList.get(position);
@@ -77,11 +83,28 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             int month = appointment.getMonth();
             int year = appointment.getYear();
             Date = day + "/" + month + "/" + year;
+
+            status = appointment.getStatus();
         }
 
         ((AppointmentAdapterViewHolder) holder).mClientNameTextView.setText(ClientName);
         ((AppointmentAdapterViewHolder) holder).mLocationTextView.setText(Location);
         ((AppointmentAdapterViewHolder) holder).mDateTextView.setText(Date);
+
+        switch (status){
+            case 0:
+                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorPending));
+                break;
+            case 1:
+                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorApproved));
+                break;
+            case 2:
+                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorCancelled));
+                break;
+            case 3:
+                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorDone));
+                break;
+        }
     }
 
 

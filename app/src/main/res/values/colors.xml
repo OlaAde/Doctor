@@ -5,6 +5,12 @@
     <color name="colorPrimaryDark">#070716</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorPending">#CCB286</color>
+    <color name="colorApproved">#7A73FF</color>
+    <color name="colorCancelled">#EC8BFF</color>
+    <color name="colorDone">#5BEB86</color>
+
+
     <color name="colorTransparent">#00ff4081</color>
 
     <color name="bottomText">#6b6b76</color>

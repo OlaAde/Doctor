@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.works.adeogo.doctor">
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -49,13 +51,12 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".FirstActivity"
-            android:theme="@style/LoginTheme">
-
-        </activity>
-        <activity android:name=".SupportActivity"
-            android:parentActivityName=".MainActivity">
-
-        </activity>
+            android:theme="@style/LoginTheme"></activity>
+        <activity
+            android:name=".SupportActivity"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".AppointmentActivity"
+            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

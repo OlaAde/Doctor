@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.works.adeogo.doctor.adapters.AppointmentAdapter;
 import com.works.adeogo.doctor.model.Appointment;
 
@@ -44,10 +46,25 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mAppointmentDatabaseReference;
     private ChildEventListener mChildEventListener;
+    private Query mAppointmentQuery;
 
     private List<Appointment> mList = new ArrayList<>();
+    private List<String> mKeyList = new ArrayList<>();
     private String userId;
     private String mUsername;
+
+    private String mUserId, mDoctorPhone, mClientPhone, mMessage;
+    private String mDoctorId;
+    private String mTime;
+    private int mYear;
+    private int mMonth;
+    private int mDay;
+    private String mDoctorName;
+    private String mClientName;
+    private String mLocation;
+    private int mStatus;
+
+
 
     public AppointmentFragment() {
         // Required empty public constructor
@@ -81,6 +98,7 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
                     // User is signed in
                     userId = user.getUid();
                     mAppointmentDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("appointments").child("appointments");
+                    mAppointmentQuery = mAppointmentDatabaseReference.orderByChild("status");
                     onSignedInInitialize(user.getDisplayName());
                 } else {
                     // User is signed out
@@ -109,6 +127,7 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    mKeyList.add(dataSnapshot.getKey());
                     mNoResults.setVisibility(View.GONE);
                     Appointment appointment = dataSnapshot.getValue(Appointment.class);
 
@@ -125,7 +144,7 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
                 public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
                 public void onCancelled(DatabaseError databaseError) {}
             };
-            mAppointmentDatabaseReference.addChildEventListener(mChildEventListener);
+            mAppointmentQuery.addChildEventListener(mChildEventListener);
         }
     }
 
@@ -154,6 +173,39 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
     }
     @Override
     public void voidMethod(List<Appointment> list, int adapterPosition) {
+        mDoctorId = userId;
+        Appointment appointment = mList.get(adapterPosition);
+        mUserId = appointment.getUserId();
+        mDay = appointment.getDay();
+        mClientName = appointment.getClientName();
+        mDoctorName = appointment.getDoctorName();
+        mDoctorPhone = appointment.getDoctorPhone();
+        mClientPhone = appointment.getClientPhone();
+        mLocation = appointment.getLocation();
+        mTime = appointment.getTime();
+        mStatus = appointment.getStatus();
+        mMonth = appointment.getMonth();
+        mYear = appointment.getYear();
+        mDay = appointment.getDay();
+        mMessage = appointment.getMessage();
 
+
+        Intent intent = new Intent(getActivity(), AppointmentActivity.class);
+        intent.putExtra("key", mKeyList.get(adapterPosition));
+        intent.putExtra("userId", mUserId);
+        intent.putExtra("doctorId", mDoctorId);
+        intent.putExtra("clientName", mClientName);
+        intent.putExtra("doctorName", mDoctorName);
+        intent.putExtra("doctor_phone", mDoctorPhone);
+        intent.putExtra("client_phone", mClientPhone);
+        intent.putExtra("location", mLocation);
+        intent.putExtra("time", mTime);
+        intent.putExtra("status", mStatus);
+        intent.putExtra("day", mDay);
+        intent.putExtra("month", mMonth);
+        intent.putExtra("year", mYear);
+        intent.putExtra("message", mMessage);
+
+        startActivity(intent);
     }
 }
