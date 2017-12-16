@@ -137,30 +137,6 @@ public class ProfileFragment extends Fragment {
 
         return rootView;
     }
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
-//            Uri selectedImageUri = data.getData();
-//
-//            // Get a reference to store file at chat_photos/<FILENAME>
-//            StorageReference photoRef = mProfilePhotosStorageReference.child(selectedImageUri.getLastPathSegment());
-//
-//            // Upload file to Firebase Storage
-//            photoRef.putFile(selectedImageUri)
-//                    .addOnSuccessListener(getActivity(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            // When the image has successfully uploaded, we get its download URL
-//                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-//
-//                            // Set the download URL to the message box, so that the user can send it to the database
-//                            DoctorProfile doctorProfile = new DoctorProfile(mDoctorId, mEmail, mPassword, mDoctorName, mPhoneNumber, downloadUrl.toString(), mCountry, mCity, mSpeciality);
-//                            mDoctorProfileDatabaseReference.push().setValue(doctorProfile);
-//                        }
-//                    });
-//        }
-//    }
 
     private void onSignedInInitialize(String username) {
         mUsername = username;

@@ -50,6 +50,7 @@ dependencies {
 
     implementation 'de.hdodenhof:circleimageview:1.2.1'
     implementation 'com.github.devlight.navigationtabstrip:navigationtabstrip:1.0.4'
+    implementation 'net.rimoto:intlphoneinput:1.0.1'
 
 
     implementation 'com.android.support:support-vector-drawable:26.1.0'

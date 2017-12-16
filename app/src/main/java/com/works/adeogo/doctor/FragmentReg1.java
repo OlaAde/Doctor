@@ -20,6 +20,8 @@ import com.stepstone.stepper.Step;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 
+import net.rimoto.intlphoneinput.IntlPhoneInput;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +31,11 @@ import java.util.List;
 
 public class FragmentReg1 extends Fragment implements BlockingStep {
 
-    private MaterialEditText mEmailEDT;
-    private MaterialEditText mPasswordEDT;
-    private MaterialEditText mNameEDT;
-    private MaterialEditText mPhoneEDT;
+    private MaterialEditText mEmailEDT, mPasswordEDT, mNameEDT;
+    private IntlPhoneInput mIntlPhoneInput;
     private LinearLayout mLayout;
     private SendMessage SM;
+    private String phoneNumber;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
         mEmailEDT = v.findViewById(R.id.edtEmail);
         mPasswordEDT = v.findViewById(R.id.edtPassword);
         mNameEDT = v.findViewById(R.id.edtName);
-        mPhoneEDT = v.findViewById(R.id.edtPhone);
+        mIntlPhoneInput = v.findViewById(R.id.phoneInput);
 
         mLayout = v.findViewById(R.id.reg_rootLayout);
         //initialize your UI
@@ -51,49 +52,9 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
         return v;
     }
 
-    public List<String> setEmailGuys(View v){
-        if (TextUtils.isEmpty(mEmailEDT.getText().toString())){
-//            Snackbar.make(v, "", Snackbar.LENGTH_SHORT)
-//                    .show();
-            Toast.makeText(getActivity(), "Please enter email address", Toast.LENGTH_SHORT).show();
-            return null;
-        }
-
-        if (TextUtils.isEmpty(mNameEDT.getText().toString())){
-            Snackbar.make(v, "Please enter phone number", Snackbar.LENGTH_SHORT)
-                    .show();
-            return null;
-        }
-
-        if (TextUtils.isEmpty(mPasswordEDT.getText().toString())){
-            Snackbar.make(v, "Please enter password", Snackbar.LENGTH_SHORT)
-                    .show();
-            return null;
-        }
-
-        if (mPasswordEDT.getText().toString().length()< 6){
-            Snackbar.make(v, "Password too short !!!", Snackbar.LENGTH_SHORT)
-                    .show();
-            return null;
-        }
-
-        if (TextUtils.isEmpty(mPhoneEDT.getText().toString())){
-            Snackbar.make(v, "Please enter email address", Snackbar.LENGTH_SHORT)
-                    .show();
-            return null;
-        }
-
-        List<String> retString = new ArrayList<>();
-        retString.add(mEmailEDT.getText().toString());
-        retString.add(mPasswordEDT.getText().toString());
-        retString.add(mEmailEDT.getText().toString());
-        retString.add(mPhoneEDT.getText().toString());
-    return retString;
-    }
-
     public boolean checkData(){
+
         if (TextUtils.isEmpty(mEmailEDT.getText().toString())){
-//
             Toast.makeText(getActivity(), "Please enter email address", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -116,10 +77,17 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
             return false;
         }
 
-        if (TextUtils.isEmpty(mPhoneEDT.getText().toString())){
+        phoneNumber = mIntlPhoneInput.getNumber();
+
+        if (TextUtils.isEmpty(phoneNumber)){
             Toast.makeText(getActivity(), "Please enter phone number", Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        if (!mIntlPhoneInput.isValid()){
+            Toast.makeText(getActivity(), "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
+        }
+
 
         return true;
     }
@@ -162,7 +130,7 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
         if (!checkData())
             return;
         SM.sendData(mEmailEDT.getText().toString().trim(), mPasswordEDT.getText().toString().trim(), mNameEDT.getText().toString().trim(),
-                mPhoneEDT.getText().toString().trim());
+                phoneNumber);
         callback.goToNextStep();
     }
 

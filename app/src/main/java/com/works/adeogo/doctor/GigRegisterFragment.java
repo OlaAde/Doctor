@@ -153,7 +153,7 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
                                         }
 
                                         waitingDialog.dismiss();
-                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                        Intent intent = new Intent(mContext, FirstActivity.class);
                                         startActivity(intent);
                                         activity.finish();
                                     }
@@ -194,11 +194,11 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         Toast.makeText(mContext, "Registered successfully !!!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                        Intent intent = new Intent(mContext, FirstActivity.class);
                                         if (mContext != null){
                                             startActivity(intent);
                                         }else {
-                                            Intent intent1 = new Intent(mContext, MainActivity.class);
+                                            Intent intent1 = new Intent(mContext, FirstActivity.class);
                                             startActivity(intent1);
                                         }
 
@@ -220,7 +220,7 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
                                     public void onSuccess(Void aVoid) {
 
                                         Toast.makeText(mContext, "Registered successfully !!!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(mContext, MainActivity.class);
+                                        Intent intent = new Intent(mContext, FirstActivity.class);
                                         startActivity(intent);
                                         activity.finish();
                                         waitingDialog.dismiss();
