@@ -33,18 +33,11 @@ public class ActivityRegister extends AppCompatActivity implements StepperLayout
     private String mPhone;
     private int clicked = 0;
 
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/open_sans_semibold.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build());
 
         setContentView(R.layout.activity_register2);
 

@@ -8,12 +8,10 @@ import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.works.adeogo.doctor.MainActivity;
+import com.works.adeogo.doctor.NavigationStartActivity;
 import com.works.adeogo.doctor.QuestionActivity;
 import com.works.adeogo.doctor.R;
 
@@ -79,7 +77,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 mNotificationManager.notify(0, notification);
             } else if (TextUtils.equals(type, "1")){
 
-                resultIntent = new Intent(this, MainActivity.class);
+                resultIntent = new Intent(this, NavigationStartActivity.class);
                 resultIntent.putExtra("start", true);
 
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);

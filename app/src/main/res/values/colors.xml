@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="colorPrimary">#0a091b</color>
-    <color name="colorPrimaryDark">#070716</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#5b5a62</color>
+    <color name="colorPrimaryDark">#414048</color>
+    <color name="colorAccent">#5b5a62</color>
 
-    <color name="colorPending">#CCB286</color>
-    <color name="colorApproved">#7A73FF</color>
-    <color name="colorCancelled">#EC8BFF</color>
-    <color name="colorDone">#5BEB86</color>
+    <color name="colorPending">#e8d678</color>
+    <color name="colorApproved">#99CC99</color>
+    <color name="colorCancelled">#da635d</color>
+    <color name="colorDone">#dcd0c0</color>
+
+    <color name="colorRed">#c2150f</color>
 
 
     <color name="colorTransparent">#00ff4081</color>
@@ -19,10 +21,20 @@
     <color name="btnRegister">#83838c</color>
 
     <color name="baseReleaseColor">#212121</color>
-    <color name="basePressColor">#FAFAFA</color>
+    <color name="basePressColor">#fafafa</color>
     <color name="ballReleaseColor">#9E9E9E</color>
 
     <color name="white">#f5eee8</color>
+    <color name="whitish">#e1e1e1</color>
     <color name="black">#000000</color>
     <color name="blue1">#8CBEB2</color>
+    <color name="transparent_white">#00f5eee8</color>
+    <color name="slight_transparent_white">#5cffffff</color>
+
+    <color name="colorChatNotYou">#945b5a62</color>
+    <color name="colorChatYou">#948cbeb2</color>
+    <color name="colorTime">#e8d678</color>
+
+    <color name="startGreen">#1cd8d2</color>
+    <color name="endGreen">#93edc7</color>
 </resources>

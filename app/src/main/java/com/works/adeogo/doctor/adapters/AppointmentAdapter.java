@@ -1,17 +1,18 @@
 package com.works.adeogo.doctor.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
 import com.works.adeogo.doctor.R;
 import com.works.adeogo.doctor.model.Appointment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,16 +38,15 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public class AppointmentAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView mClientNameTextView;
-        public final TextView mLocationTextView;
         public final TextView mDateTextView;
-        public final CardView mAppointmentCardVIew;
+        public final ImageView mAppointmentColorVIew, mProfileImageView;
 
         public AppointmentAdapterViewHolder(View itemView) {
             super(itemView);
             mClientNameTextView = (TextView) itemView.findViewById(R.id.itemClientName);
-            mLocationTextView = (TextView) itemView.findViewById(R.id.itemLocation);
             mDateTextView = (TextView) itemView.findViewById(R.id.itemDate);
-            mAppointmentCardVIew = itemView.findViewById(R.id.appointmentCardView);
+            mAppointmentColorVIew = itemView.findViewById(R.id.colorAppointment);
+            mProfileImageView = itemView.findViewById(R.id.profile);
 
             itemView.setOnClickListener(this);
         }
@@ -71,7 +71,7 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         String ClientName = null;
         String Location = null;
-        String Date = null;
+        String Date = null, PictureUrl = null;
         int status = -1;
 
 
@@ -80,31 +80,41 @@ public class AppointmentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ClientName = appointment.getClientName();
             Location = appointment.getLocation();
             int day = appointment.getDay();
-            int month = appointment.getMonth();
+            int month = appointment.getMonth() + 1;
             int year = appointment.getYear();
             Date = day + "/" + month + "/" + year;
+            PictureUrl = appointment.getImageUrl();
 
             status = appointment.getStatus();
+
+            if (PictureUrl == null){
+                ((AppointmentAdapterViewHolder) holder).mProfileImageView.setImageDrawable(mContext.getResources().getDrawable(R.drawable.profile_black));
+            }else {
+                Picasso.with(mContext)
+                        .load(PictureUrl)
+                        .into( ((AppointmentAdapterViewHolder) holder).mProfileImageView);
+            }
+
+            ((AppointmentAdapterViewHolder) holder).mClientNameTextView.setText(ClientName);
+            ((AppointmentAdapterViewHolder) holder).mDateTextView.setText(Date);
+
+            switch (status){
+                case 0:
+                    ((AppointmentAdapterViewHolder) holder).mAppointmentColorVIew.setImageDrawable(mContext.getResources().getDrawable(R.drawable.pending_appointment));
+                    break;
+                case 1:
+                    ((AppointmentAdapterViewHolder) holder).mAppointmentColorVIew.setImageDrawable(mContext.getResources().getDrawable(R.drawable.accepted_appointment));
+                    break;
+                case 2:
+                    ((AppointmentAdapterViewHolder) holder).mAppointmentColorVIew.setImageDrawable(mContext.getResources().getDrawable(R.drawable.cancelled_appointment));
+                    break;
+                case 3:
+                    ((AppointmentAdapterViewHolder) holder).mAppointmentColorVIew.setImageDrawable(mContext.getResources().getDrawable(R.drawable.ic_done_black_24px_green));
+                    break;
+            }
         }
 
-        ((AppointmentAdapterViewHolder) holder).mClientNameTextView.setText(ClientName);
-        ((AppointmentAdapterViewHolder) holder).mLocationTextView.setText(Location);
-        ((AppointmentAdapterViewHolder) holder).mDateTextView.setText(Date);
 
-        switch (status){
-            case 0:
-                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorPending));
-                break;
-            case 1:
-                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorApproved));
-                break;
-            case 2:
-                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorCancelled));
-                break;
-            case 3:
-                ((AppointmentAdapterViewHolder) holder).mAppointmentCardVIew.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorDone));
-                break;
-        }
     }
 
 

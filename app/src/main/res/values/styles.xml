@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/whitish</item>
+
     </style>
 
     <style name="LoginTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -18,14 +20,38 @@
 
     <style name="tabs_text_appearance" parent="TextAppearance.Design.Tab">
         <item name="android:fontFamily">arkhip_font.ttf</item>
+
+    </style>
+
+    <style name="drawer_text_appearance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">@font/shree</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:layout_marginTop">55dp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="listPreferredItemHeightSmall">58dp</item>
+
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--For The spot dialog-->
+    <style name="Custom" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogTitleText"></item>
+        <item name="DialogSpotColor">@android:color/white</item>
+        <item name="DialogSpotCount">4</item>
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/background_splash</item>
+    </style>
+
 </resources>

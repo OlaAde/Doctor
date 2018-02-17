@@ -26,9 +26,9 @@
                 android:layout_height="150dp"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/background"
-                android:id="@+id/profilePictureImageView"/>
+                android:id="@+id/profilePictureImageView"
 
-
+                app:border_width="0.5dp"/>
 
         </RelativeLayout>
 
@@ -92,109 +92,317 @@
 
         </LinearLayout>
 
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="7"
+                    android:orientation="horizontal">
+
+                    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="S"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/sunday"
+                        android:layout_weight="1"/>
+
+                    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="M"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/monday"
+                        android:layout_weight="1"/>
+
+                    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="T"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/tuesday"
+                        android:layout_weight="1"/>
+
+                    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="W"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/wednesday"
+                        android:layout_weight="1"/>
+
+                    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="T"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/thursday"
+                        android:layout_weight="1"/>
+
+                    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="F"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/friday"
+                        android:layout_weight="1"/>
+
+                    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="0dp"
+                        android:layout_height="30dp"
+                        android:background="@color/colorPrimary"
+                        android:text="S"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"
+                        android:padding="5dp"
+                        android:gravity="center"
+                        android:textStyle="bold"
+                        android:id="@+id/saturday"
+                        android:layout_weight="1"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Charges"
+            android:text="Meeting Venues"
             android:gravity="center"
             android:textSize="12sp"
             android:layout_marginTop="4dp"
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="5dp"/>
 
-        <android.support.v7.widget.CardView
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="4"
+        android:orientation="horizontal"
+        android:layout_marginBottom="5dp">
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@color/colorPrimary"
+            android:text="Online"
+            android:layout_margin="10dp"
+            android:textColor="@color/white"
+            android:padding="5dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:id="@+id/online"
+            android:layout_weight="1"/>
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@color/colorPrimary"
+            android:text="Home"
+            android:layout_margin="10dp"
+            android:textColor="@color/white"
+            android:padding="5dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:id="@+id/home"
+            android:layout_weight="1"/>
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@color/colorPrimary"
+            android:text="Office"
+            android:layout_margin="10dp"
+            android:textColor="@color/white"
+            android:padding="5dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:id="@+id/office"
+            android:layout_weight="1"/>
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:background="@color/colorPrimary"
+            android:text="Clinic"
+            android:layout_margin="10dp"
+            android:textColor="@color/white"
+            android:padding="5dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:id="@+id/clinic"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="1dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp">
+            android:layout_height="0.01dp"
+            android:background="@color/colorPrimary"
+            android:layout_marginBottom="10dp"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="vertical">
 
             <LinearLayout
+                android:layout_margin="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <LinearLayout
-                    android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/ic_access_time_black_24dp" />
+
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="6"
-                    android:gravity="center">
+                    android:id="@+id/startTime"
+                    android:textSize="18sp"
+                    tools:text=" 14:00  -  "/>
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_weight="3"
-                        android:gravity="center"
-                        android:layout_margin="4dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="10dp"
-                            android:text="Lowest:"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/tVLowestCost"
-                            tools:text=" $1000"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_weight="3"
-                        android:gravity="center"
-                        android:layout_margin="4dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="10dp"
-                            android:text="Highest:"/>
-
-                        <TextView
-                            android:id="@+id/tVHighestCost"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            tools:text=" $2344"/>
-
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:textSize="18sp"
+                    android:id="@+id/endTime"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:layout_margin="4dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="10dp"
-                        android:text="Special:"/>
-
-                    <TextView
-                        android:id="@+id/tVSpecialCost"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        tools:text=" $4348347"/>
-
-
-                </LinearLayout>
+                    tools:text=" 24:00"/>
             </LinearLayout>
 
-        </android.support.v7.widget.CardView>
 
+            <View
+                android:layout_marginTop="13dp"
+                android:layout_marginLeft="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="0.01dp"
+                android:background="@color/colorPrimary"/>
+        </LinearLayout>
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:srcCompat="@drawable/ic_attach_money_black_24dp"/>
+
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:id="@+id/tVSpecialCost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text=" $4348347"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/aboutMeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_margin="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:srcCompat="@drawable/profile_black"/>
+
+                <TextView
+                    android:layout_marginLeft="15dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="About Me"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_marginTop="7dp"
+                android:layout_marginLeft="60dp"
+                android:layout_width="match_parent"
+                android:layout_height="0.1dp"
+                android:background="@color/colorPrimary"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_marginTop="25dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="© 2018 Giatros Inc.\nAll Rights Reserved."/>
     </LinearLayout>
 
 </ScrollView>

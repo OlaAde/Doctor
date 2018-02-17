@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/action_messages"
+            android:icon="@drawable/ic_message"
+            android:title="@string/action_messages" />
+        <item
+            android:id="@+id/action_appointments"
+            android:icon="@drawable/appointment"
+            android:title="@string/action_appointments" />
+        <item
+            android:id="@+id/action_collaborate"
+            android:icon="@drawable/collaborate"
+            android:title="@string/action_collaborate" />
+        <item
+            android:id="@+id/action_profile"
+            android:icon="@drawable/profile"
+            android:title="@string/action_profile" />
+
+        <item
+            android:checkable="false"
+            android:id="@+id/action_contact_us"
+            android:icon="@drawable/support"
+            android:title="@string/action_contact_us" />
+        <item
+            android:checkable="false"
+            android:id="@+id/action_logout"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/action_logout" />
+    </group>
+
+
+</menu>

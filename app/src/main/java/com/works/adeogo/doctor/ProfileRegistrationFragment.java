@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -35,9 +36,14 @@ import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.Step;
 import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
+import com.works.adeogo.doctor.utils.FileUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import id.zelory.compressor.Compressor;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -47,12 +53,12 @@ import static android.app.Activity.RESULT_OK;
  */
 public class ProfileRegistrationFragment extends Fragment implements BlockingStep {
 
-    private String mEmail, mPassword, mPhone, mName;
+    private String mEmail, mPassword, mPhone, mName, mPhotoUrl, mCountry, mSpeciality, mCity;
 
-    private String mPhotoUrl ;
-    private String mCountry;
-    private String mSpeciality;
-    private String mCity;
+    private int sex;
+    private RadioButton mMaleButton;
+    private RadioButton mFemaleButton;
+
 
     private SendMessage1 SM;
 
@@ -74,6 +80,9 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
     private LinearLayout mCityLinearLayout;
     private ScrollView scrollView;
 
+    private File actualImage;
+    private File compressedImage;
+
     public ProfileRegistrationFragment() {
         // Required empty public constructor
     }
@@ -91,10 +100,12 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         mSpecialitySpinner = view.findViewById(R.id.imvSelectSpeciality);
         mCitySpinner = view.findViewById(R.id.imvPickCity);
         mCityLinearLayout = view.findViewById(R.id.llPickCity);
+        mMaleButton = view.findViewById(R.id.radio_male);
+        mFemaleButton = view.findViewById(R.id.radio_female);
 
         mPickImageV = view.findViewById(R.id.imvPickImage);
         mProgressBar = view.findViewById(R.id.progressBarImageView);
-        mProgressBar.setVisibility(View.GONE);
+        mProgressBar.setProgress(0);
         mPickImageV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,20 +139,25 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         mCountrySpinner.setAdapter(mCountryAdapter);
 
 
-
         mCountrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Object item = parent.getItemAtPosition(position);
                 String Text = item.toString();
                 mCountry = Text;
-                if (TextUtils.equals(Text, "Uganda")){
+                if (TextUtils.equals(Text, "Uganda")) {
                     country_chooser_int = 1;
-                    setCitySpinners(mCityLinearLayout,mCitySpinner );
-                }else if (TextUtils.equals(Text, "Nigeria")){
+                    setCitySpinners(mCityLinearLayout, mCitySpinner);
+                } else if (TextUtils.equals(Text, "Nigeria")) {
                     country_chooser_int = 2;
                     setCitySpinners(mCityLinearLayout, mCitySpinner);
-                }else if (TextUtils.equals(Text, "Russia")){
+                } else if (TextUtils.equals(Text, "Russia")) {
                     country_chooser_int = 3;
+                    setCitySpinners(mCityLinearLayout, mCitySpinner);
+                } else if (TextUtils.equals(Text, "Ghana")) {
+                    country_chooser_int = 4;
+                    setCitySpinners(mCityLinearLayout, mCitySpinner);
+                } else if (TextUtils.equals(Text, "Zambia")) {
+                    country_chooser_int = 5;
                     setCitySpinners(mCityLinearLayout, mCitySpinner);
                 }
             }
@@ -175,6 +191,22 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
             }
         });
 
+
+        mMaleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sex = 0;
+            }
+        });
+
+        mFemaleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sex = 1;
+            }
+        });
+
+
         return view;
     }
 
@@ -184,25 +216,42 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+
             Uri selectedImageUri = data.getData();
 
+
+            try {
+                actualImage = FileUtil.from(getActivity(), data.getData());
+                compressedImage = new Compressor(getActivity()).compressToFile(actualImage);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (actualImage != null && compressedImage != null) {
+                compressedImage.getTotalSpace();
+
+            }
+
+            Uri compressedUri = Uri.fromFile(compressedImage);
+
+
             // Get a reference to store file at chat_photos/<FILENAME>
-            StorageReference photoRef = mProfilePhotosStorageReference.child(selectedImageUri.getLastPathSegment());
+            StorageReference photoRef = mProfilePhotosStorageReference.child(compressedUri.getLastPathSegment());
 
 
             // Upload file to Firebase Storage
-            photoRef.putFile(selectedImageUri)
-                   .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                       @Override
-                       public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                           mProgressBar.setVisibility(View.VISIBLE);
-                           float upload = taskSnapshot.getBytesTransferred();
-                           float total = taskSnapshot.getTotalByteCount();
-                           float currentProgress = upload * 100/total;
+            photoRef.putFile(compressedUri)
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            mProgressBar.setVisibility(View.VISIBLE);
+                            float upload = taskSnapshot.getBytesTransferred();
+                            float total = taskSnapshot.getTotalByteCount();
+                            float currentProgress = upload * 100 / total;
 
-                           mProgressBar.setProgress(currentProgress);
-                       }
-                   }) .addOnSuccessListener(getActivity(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            mProgressBar.setProgress(currentProgress);
+                        }
+                    }).addOnSuccessListener(getActivity(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // When the image has successfully uploaded, we get its download URL
@@ -227,26 +276,26 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         }
     }
 
-    public List<String> setProfileDetails(View v){
-        if (TextUtils.isEmpty(mPhotoUrl)){
+    public List<String> setProfileDetails(View v) {
+        if (TextUtils.isEmpty(mPhotoUrl)) {
             Snackbar.make(v, "Please pick a picture", Snackbar.LENGTH_SHORT)
                     .show();
             return null;
         }
 
-        if (TextUtils.isEmpty(mCountry)){
+        if (TextUtils.isEmpty(mCountry)) {
             Snackbar.make(v, "Please pick your resident country", Snackbar.LENGTH_SHORT)
                     .show();
             return null;
         }
 
-        if (TextUtils.isEmpty(mSpeciality)){
+        if (TextUtils.isEmpty(mSpeciality)) {
             Snackbar.make(v, "Please select your speciality", Snackbar.LENGTH_SHORT)
                     .show();
             return null;
         }
 
-        if (TextUtils.isEmpty(mCity)){
+        if (TextUtils.isEmpty(mCity)) {
             Snackbar.make(v, "Please pick your resident city", Snackbar.LENGTH_SHORT)
                     .show();
             return null;
@@ -286,17 +335,21 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
             }
         });
 
-        if(country_chooser_int  == 1 ){
+        if (country_chooser_int == 1) {
             mCityAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.ugandan_cities, android.R.layout.simple_spinner_item);
-        }
-        else if(country_chooser_int == 2){
+        } else if (country_chooser_int == 2) {
             mCityAdapter = ArrayAdapter.createFromResource(getContext(),
                     R.array.nigerian_cities, android.R.layout.simple_spinner_item);
-        }
-        else if(country_chooser_int == 3){
+        } else if (country_chooser_int == 3) {
             mCityAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.russian_cities, android.R.layout.simple_spinner_item);
+        } else if (country_chooser_int == 4) {
+            mCityAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.ghanian_cities, android.R.layout.simple_spinner_item);
+        } else if (country_chooser_int == 3) {
+            mCityAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.zambian_cities, android.R.layout.simple_spinner_item);
         }
 
         spinner.setAdapter(mCityAdapter);
@@ -311,8 +364,7 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         callback.goToNextStep();
     }
 
-    protected void displayReceivedData(String email, String password, String name, String phone)
-    {
+    protected void displayReceivedData(String email, String password, String name, String phone) {
         mEmail = email;
         mPassword = password;
         mName = name;
@@ -320,27 +372,27 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
     }
 
     interface SendMessage1 {
-        void sendData(String email, String password, String name, String phone, String photoUrl, String country, String speciality, String city );
+        void sendData(String email, String password, String name, String phone, String photoUrl, String country, String speciality, String city);
     }
 
     private boolean check() {
 
-        if (TextUtils.isEmpty(mPhotoUrl)){
+        if (TextUtils.isEmpty(mPhotoUrl)) {
             Toast.makeText(getActivity(), "Please pick a picture", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (TextUtils.isEmpty(mCountry)){
+        if (TextUtils.isEmpty(mCountry)) {
             Toast.makeText(getActivity(), "Please pick your resident country", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (TextUtils.isEmpty(mSpeciality)){
+        if (TextUtils.isEmpty(mSpeciality)) {
             Toast.makeText(getActivity(), "Please select your speciality", Toast.LENGTH_SHORT).show();
             return false;
         }
 
-        if (TextUtils.isEmpty(mCity)){
+        if (TextUtils.isEmpty(mCity)) {
             Toast.makeText(getActivity(), "Please pick your resident city", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -367,6 +419,6 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
 
     @Override
     public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
-//        callback.goToPrevStep();
+        callback.goToPrevStep();
     }
 }

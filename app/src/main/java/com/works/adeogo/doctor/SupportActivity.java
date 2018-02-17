@@ -1,46 +1,60 @@
 package com.works.adeogo.doctor;
 
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.works.adeogo.doctor.R;
 
-import dmax.dialog.SpotsDialog;
+import java.net.URLEncoder;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SupportActivity extends AppCompatActivity {
 
     private MaterialEditText mDetailsEditText, mSubjectEditText;
     private String mDetails, mSubject;
-    private LinearLayout mMainLayout;
+    private RelativeLayout mMainLayout;
+    private ActionBar mActionBar;
+    private TextView mThanksTextView;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build());
+
         setContentView(R.layout.activity_support);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mActionBar =  getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setTitle("Contact Us");
 
+        mThanksTextView =findViewById(R.id.tvThanks);
         mDetailsEditText = findViewById(R.id.edtProblemDisc);
         mSubjectEditText = findViewById(R.id.edtSubject);
         mMainLayout = findViewById(R.id.support_main);
+
+        mThanksTextView.setVisibility(View.GONE);
     }
 
     @Override
@@ -57,26 +71,43 @@ public class SupportActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_contact_us) {
             mDetails = mDetailsEditText.getText().toString();
             mSubject = mSubjectEditText.getText().toString();
 
             if (TextUtils.isEmpty(mSubject) || TextUtils.equals(mSubject, "")){
-                Snackbar.make(mMainLayout, "Please enter a subject", Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please enter a subject", Toast.LENGTH_SHORT).show();
+                return true;
             }
             if (TextUtils.isEmpty(mDetails) || TextUtils.equals(mDetails, "")){
-                Snackbar.make(mMainLayout, "Please describe your problem", Snackbar.LENGTH_SHORT).show();
-            }else if (mDetails.length() < 50){
-                Snackbar.make(mMainLayout, "Please further describe your problem", Snackbar.LENGTH_SHORT).show();
-            }else if (mDetails.length() > 50 && !TextUtils.isEmpty(mSubject) && !TextUtils.equals(mSubject, "")){
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/html");
-                intent.putExtra(Intent.EXTRA_EMAIL, "adeogo.oladipo@gmail.com");
-                intent.putExtra(Intent.EXTRA_SUBJECT, mSubject);
-                intent.putExtra(Intent.EXTRA_TEXT, mDetails);
+                Toast.makeText(this, "Please describe your problem", Toast.LENGTH_SHORT).show();
+            }else if (mDetails.length() < 10){
+                Toast.makeText(this, "Please further describe your problem", Toast.LENGTH_SHORT).show();
+            }else if (mDetails.length() > 10 && !TextUtils.isEmpty(mSubject) && !TextUtils.equals(mSubject, "")){
 
-                startActivity(Intent.createChooser(intent, "Contact Us"));
+                String uriText = "mailto:hellodoktari@gmail.com" +
+                        "?subject=" + URLEncoder.encode(mSubject) +
+                        "&body=" + URLEncoder.encode(mDetails);
+                Uri uri = Uri.parse(uriText);
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+                sendIntent.setData(uri);
+                Intent intent1 = new Intent(SupportActivity.this, ThanksActivity.class);
+
+                startActivity(Intent.createChooser(sendIntent, "Contact Us"));
+                messageSent();
+
+//                Intent intent = new Intent(Intent.ACTION_SENDTO);
+//                intent.setType("text/plain");
+//                intent.putExtra(android.content.Intent.EXTRA_EMAIL,new String[] { "hellodoktari@gmail.com" });
+//                intent.putExtra(Intent.EXTRA_SUBJECT, mSubject);
+//                intent.putExtra(Intent.EXTRA_TEXT, mDetails);
+//
+//                Toast.makeText(this, "Gone", Toast.LENGTH_SHORT).show();
+//                startActivity(Intent.createChooser(intent, "Contact Us"));
+
+
+//                Intent[] intents = {intent};
+//                startActivities(intents);
             }
 
             return true;
@@ -85,4 +116,9 @@ public class SupportActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+   private void messageSent(){
+        mThanksTextView.setVisibility(View.VISIBLE);
+        mDetailsEditText.setText("");
+        mSubjectEditText.setText("");
+   }
 }

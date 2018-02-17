@@ -11,7 +11,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -20,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.works.adeogo.doctor.adapters.ListAdapter;
 import com.works.adeogo.doctor.model.ChatHead;
@@ -41,6 +44,7 @@ public class MessagesFragment extends Fragment implements ListAdapter.ListAdapte
     private ListAdapter mListAdapter;
     private LinearLayoutManager mManager;
     private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
 
     public static final int RC_SIGN_IN = 1;
     private FirebaseAuth mFirebaseAuth;
@@ -67,6 +71,7 @@ public class MessagesFragment extends Fragment implements ListAdapter.ListAdapte
         View rootView = inflater.inflate(R.layout.fragment_messages, container, false);
         mRecyclerView = rootView.findViewById(R.id.messages_recycler_view);
         mNoResults = rootView.findViewById(R.id.tvNoResultMessages);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
 
         mListAdapter = new ListAdapter(getContext(), this);
         mManager = new LinearLayoutManager(getContext());
@@ -86,6 +91,7 @@ public class MessagesFragment extends Fragment implements ListAdapter.ListAdapte
                     // User is signed in
                     userId = user.getUid();
                     mChatDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child("chat_head");
+
                     onSignedInInitialize(user.getDisplayName());
                 } else {
                     // User is signed out
@@ -109,6 +115,23 @@ public class MessagesFragment extends Fragment implements ListAdapter.ListAdapte
     }
 
     private void attachDatabaseReadListener() {
+
+        mChatDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    mProgressBar.setVisibility(View.GONE);
+                }else {
+                    mProgressBar.setVisibility(View.GONE);
+                    mNoResults.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
                 @Override
@@ -179,6 +202,7 @@ public class MessagesFragment extends Fragment implements ListAdapter.ListAdapte
         ChatHead chatHead = list.get(adapterPosition);
         intent.putExtra("client_id", chatHead.getUserId());
         intent.putExtra("client_name", chatHead.getUserName());
+        intent.putExtra("which", chatHead.getWhich());
         startActivity(intent);
     }
 }

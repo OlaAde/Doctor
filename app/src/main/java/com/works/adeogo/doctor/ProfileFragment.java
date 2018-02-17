@@ -1,24 +1,18 @@
 package com.works.adeogo.doctor;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -26,18 +20,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.works.adeogo.doctor.model.DoctorProfile;
-import com.works.adeogo.doctor.model.Notification;
-import com.works.adeogo.doctor.utils.FirebaseUtils;
 
-import org.w3c.dom.Text;
-
-import static android.app.Activity.RESULT_OK;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -46,8 +35,10 @@ import static android.app.Activity.RESULT_OK;
 public class ProfileFragment extends Fragment {
 
     private ImageView mProfileImageView;
-    private TextView mNameEditText, mHighestTextView, mLowestTextView, mSpecialTextView, mSpecialityTextView;
-    private TextView mPhoneNumberEditText;
+    private LinearLayout mAboutLayout;
+    private TextView mNameEditText,  mSpecialTextView, mSpecialityTextView, mStartTimeTextVIew, mEndTimeTextView, mOnlineTextView, mHomeTextView, mOfficeTextView, mClinicTextView;
+    private TextView mPhoneNumberEditText, mSundayDateTextView, mMondayDateTextView, mTuesdayDateTextView, mWednesdayDateTextView, mThursdayDateTextView, mFridayDateTextView, mSaturdayDateTextView;
+
 
     private String urlFemale = "https://firebasestorage.googleapis.com/v0/b/dokita-c3d87.appspot.com/o/generic_photos%2Ficon_female.png?alt=media&token=eaecb6c4-5f7c-4bd6-ae8f-6a7a73e27a80";
     private String urlMale = "https://firebasestorage.googleapis.com/v0/b/dokita-c3d87.appspot.com/o/generic_photos%2Ficon_male.png?alt=media&token=e4530bf8-4f41-495d-885e-e2c73007b395";
@@ -56,22 +47,12 @@ public class ProfileFragment extends Fragment {
     public static final int RC_SIGN_IN = 1;
     private static final int RC_PHOTO_PICKER = 2;
 
-    private String userId;
-    public static final String ANONYMOUS = "anonymous";
-    private String mUsername;
+    private String userId, mUsername, mAbout;
 
-    private String mPictureUrl = urlMale;
-    private String mPhoneNumber = "";
-    private String mDoctorName = "";
-    private String mEmail = "";
-    private String mPassword = "";
-    private String mCountry = "";
-    private String mCity = "";
-    private String mSpeciality = "";
-    private String mDoctorId = "";
-    private String mLowest = "";
-    private String mHighest = "";
-    private String mSpecial = "";
+    public static final String ANONYMOUS = "anonymous";
+
+    private String mPictureUrl = urlMale, mPhoneNumber = "", mDoctorName = "", mEmail = "", mPassword = "", mCountry = "", mCity = "", mSpeciality = "", mDoctorId = "", mSpecial = "";
+    private int sunday = 0, monday = 0, tuesday = 0, wednesday = 0, thursday = 0, friday = 0, saturday = 0, startHour, startMinute, endHour, endMinute, online = 0, home = 0, office = 0, clinic = 0, sex = 0 ;
 
 
     private ChildEventListener mChildEventListener;
@@ -80,12 +61,13 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private FirebaseDatabase mFirebaseDatabase;
     private StorageReference mProfilePhotosStorageReference;
-    private DatabaseReference mDoctorProfileDatabaseReference;
+    private DatabaseReference mDoctorProfileDatabaseReference, mSelfPhotoReference;
+    private DoctorProfile mReturnedDoctorProfile;
+
 
     public ProfileFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,8 +76,24 @@ public class ProfileFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_profile, container, false);
 
-        mHighestTextView = rootView.findViewById(R.id.tVHighestCost);
-        mLowestTextView = rootView.findViewById(R.id.tVLowestCost);
+        mStartTimeTextVIew = rootView.findViewById(R.id.startTime);
+        mEndTimeTextView = rootView.findViewById(R.id.endTime);
+
+        mSundayDateTextView = rootView.findViewById(R.id.sunday);
+        mMondayDateTextView = rootView.findViewById(R.id.monday);
+        mTuesdayDateTextView = rootView.findViewById(R.id.tuesday);
+        mWednesdayDateTextView = rootView.findViewById(R.id.wednesday);
+        mThursdayDateTextView = rootView.findViewById(R.id.thursday);
+        mFridayDateTextView = rootView.findViewById(R.id.friday);
+        mSaturdayDateTextView = rootView.findViewById(R.id.saturday);
+
+        mOnlineTextView = rootView.findViewById(R.id.online);
+        mHomeTextView = rootView.findViewById(R.id.home);
+        mOfficeTextView = rootView.findViewById(R.id.office);
+        mClinicTextView = rootView.findViewById(R.id.clinic);
+
+        mAboutLayout = rootView.findViewById(R.id.aboutMeLayout);
+
         mSpecialTextView = rootView.findViewById(R.id.tVSpecialCost);
         mSpecialityTextView = rootView.findViewById(R.id.profileSpecialityTextView);
 
@@ -126,13 +124,10 @@ public class ProfileFragment extends Fragment {
             }
         };
 
-        Picasso.with(getContext())
-                .load(mPictureUrl)
-                .resize(500, 500)
-                .centerCrop()
-                .into(mProfileImageView);
+        onClicksOnCreate();
 
         mProfilePhotosStorageReference = mFirebaseStorage.getReference().child("profile_photos");
+
 
 
         return rootView;
@@ -143,6 +138,54 @@ public class ProfileFragment extends Fragment {
         attachDatabaseReadListener();
     }
 
+    private void onClicksOnCreate(){
+
+        Picasso.with(getContext())
+                .load(mPictureUrl)
+                .resize(500, 500)
+                .centerCrop()
+                .into(mProfileImageView);
+
+
+        mAboutLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), AboutActivity.class);
+
+
+                intent.putExtra("doctorId", mReturnedDoctorProfile.getDoctorId());
+                intent.putExtra("name",mReturnedDoctorProfile.getName());
+                intent.putExtra("phoneNUmber", mReturnedDoctorProfile.getDoctorPhoneNumber());
+                intent.putExtra("pictureUrl", mReturnedDoctorProfile.getPictureUrl());
+                intent.putExtra("email", mReturnedDoctorProfile.getEmail());
+                intent.putExtra("password", mReturnedDoctorProfile.getPassword());
+                intent.putExtra("country", mReturnedDoctorProfile.getCountry());
+                intent.putExtra("city", mReturnedDoctorProfile.getCity());
+                intent.putExtra("speciality", mReturnedDoctorProfile.getSpeciality());
+                intent.putExtra("consultationFee", mReturnedDoctorProfile.getConsultationFee());
+                intent.putExtra("about", mReturnedDoctorProfile.getAbout());
+
+                intent.putExtra("sunday", mReturnedDoctorProfile.getSunday());
+                intent.putExtra("monday", mReturnedDoctorProfile.getMonday());
+                intent.putExtra("tuesday", mReturnedDoctorProfile.getTuesday());
+                intent.putExtra("wednesday", mReturnedDoctorProfile.getWednesday());
+                intent.putExtra("thursday", mReturnedDoctorProfile.getThursday());
+                intent.putExtra("friday", mReturnedDoctorProfile.getFirday());
+                intent.putExtra("saturday", mReturnedDoctorProfile.getSaturday());
+                intent.putExtra("startHour", mReturnedDoctorProfile.getStartHour());
+                intent.putExtra("startMinute", mReturnedDoctorProfile.getStartMinute());
+                intent.putExtra("endHour", mReturnedDoctorProfile.getEndHour());
+                intent.putExtra("endMinute", mReturnedDoctorProfile.getEndMinute());
+                intent.putExtra("online", mReturnedDoctorProfile.getOnlineConsult());
+                intent.putExtra("home", mReturnedDoctorProfile.getHomeVisit());
+                intent.putExtra("office", mReturnedDoctorProfile.getOfficeVisit());
+                intent.putExtra("clinic", mReturnedDoctorProfile.getClinic());
+                intent.putExtra("sex", mReturnedDoctorProfile.getSex());
+
+                startActivity(intent);
+            }
+        });
+    }
     private void onSignedOutCleanup() {
         mUsername = ANONYMOUS;
         detachDatabaseReadListener();
@@ -154,6 +197,7 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     DoctorProfile doctorProfile = dataSnapshot.getValue(DoctorProfile.class);
+                    mReturnedDoctorProfile = doctorProfile;
 
                     if (TextUtils.equals(doctorProfile.getName(), "") ){
                         mNameEditText.setText("");
@@ -170,19 +214,40 @@ public class ProfileFragment extends Fragment {
                     }
 
                     mSpeciality = doctorProfile.getSpeciality();
+                    sunday = doctorProfile.getSunday();
+                    monday = doctorProfile.getMonday();
+                    tuesday = doctorProfile.getTuesday();
+                    wednesday = doctorProfile.getWednesday();
+                    thursday = doctorProfile.getThursday();
+                    friday = doctorProfile.getFirday();
+                    saturday = doctorProfile.getSaturday();
+                    startHour = doctorProfile.getStartHour();
+                    startMinute = doctorProfile.getStartMinute();
+                    endHour = doctorProfile.getEndHour();
+                    endMinute = doctorProfile.getEndMinute();
 
-                    mLowest = doctorProfile.getLowestCost();
-                    mLowest = " $" + mLowest;
-                    mHighest = doctorProfile.getHighestCost();
-                    mHighest = " $" + mHighest;
-                    mSpecial = doctorProfile.getSpecialCost();
-                    mSpecial = " $" + mSpecial;
+                    online = doctorProfile.getOnlineConsult();
+                    home = doctorProfile.getHomeVisit();
+                    office = doctorProfile.getOfficeVisit();
+                    clinic = doctorProfile.getClinic();
+
+                    sex = doctorProfile.getSex();
+
+                    mAbout = doctorProfile.getAbout();
+
+                    mSpecial = doctorProfile.getConsultationFee();
 
                     mSpecialityTextView.setText(mSpeciality);
-                    mLowestTextView.setText(mLowest);
-                    mHighestTextView.setText(mHighest);
                     mSpecialTextView.setText(mSpecial);
 
+                    if (startMinute < 10){
+                        mStartTimeTextVIew.setText(startHour+":0"+startMinute + "  -  " );
+                    }else mStartTimeTextVIew.setText(startHour+":"+startMinute + "  -  " );
+
+                    if (endMinute < 10){
+                        mEndTimeTextView.setText(endHour+":0"+endMinute);
+                    }else
+                    mEndTimeTextView.setText(endHour+":"+endMinute);
 
                     mPictureUrl = doctorProfile.getPictureUrl();
                     if (TextUtils.isEmpty(mPictureUrl)){
@@ -199,6 +264,9 @@ public class ProfileFragment extends Fragment {
                                 .centerCrop()
                                 .into(mProfileImageView);
                     }
+
+                    updateDateColor();
+                    updateVenueColor();
 
                 }
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
@@ -233,5 +301,78 @@ public class ProfileFragment extends Fragment {
         detachDatabaseReadListener();
     }
 
+    private void updateDateColor(){
+
+        if (sunday == 1){
+            mSundayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (sunday == 0){
+            mSundayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (monday == 1){
+            mMondayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (monday == 0){
+            mMondayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (tuesday == 1){
+            mTuesdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (tuesday == 0){
+            mTuesdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (wednesday == 1){
+            mWednesdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (wednesday == 0){
+            mWednesdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (thursday == 1){
+            mThursdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (thursday == 0){
+            mThursdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (friday == 1){
+            mFridayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (friday == 0){
+            mFridayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (saturday == 1){
+            mSaturdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (saturday == 0){
+            mSaturdayDateTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+    }
+
+    private void updateVenueColor(){
+
+        if (online == 1){
+            mOnlineTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (online == 0){
+            mOnlineTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (home == 1){
+            mHomeTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (home == 0){
+            mHomeTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (office == 1){
+            mOfficeTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (office == 0){
+            mOfficeTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (clinic == 1){
+            mClinicTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (clinic == 0){
+            mClinicTextView.setBackground(getActivity().getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+
+    }
 
 }

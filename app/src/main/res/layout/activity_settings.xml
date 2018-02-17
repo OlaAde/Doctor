@@ -63,54 +63,10 @@
             android:orientation="horizontal">
 
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/edtSettingsLow"
-                android:layout_marginBottom="5dp"
-                android:hint="Lowest Charge"
-                android:inputType="number"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/colorPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                app:met_floatingLabel="highlight"
-                app:met_baseColor="@color/colorPrimary"
-                app:met_singleLineEllipsis="true"
-                app:met_primaryColor="@color/colorPrimary"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.rengwuxian.materialedittext.MaterialEditText
-                android:id="@+id/edtSettingsHighest"
-                android:layout_marginBottom="5dp"
-                android:hint="Highest Charge"
-                android:inputType="number"
-                android:textColor="@color/colorPrimary"
-                android:textColorHint="@color/colorPrimary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                app:met_floatingLabel="highlight"
-                app:met_baseColor="@color/colorPrimary"
-                app:met_singleLineEllipsis="true"
-                app:met_primaryColor="@color/colorPrimary"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <com.rengwuxian.materialedittext.MaterialEditText
                 android:id="@+id/edtSettingsSpecial"
                 android:layout_marginBottom="5dp"
-                android:hint="Special Charge"
-                android:inputType="textCapWords"
+                android:hint="Consultation Fee"
+                android:inputType="number"
                 android:textColor="@color/colorPrimary"
                 android:textColorHint="@color/colorPrimary"
                 android:layout_width="match_parent"
@@ -123,11 +79,234 @@
 
         </LinearLayout>
 
-        <Button
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15sp"
+            android:text="Working Dates"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="7"
+            android:orientation="horizontal">
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@drawable/curved_button_background"
+                android:text="S"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/sunday"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="M"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/monday"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="T"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/tuesday"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@drawable/curved_button_background"
+                android:text="W"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/wednesday"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="T"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/thursday"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="F"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/friday"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="S"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/saturday"
+                android:layout_weight="1"/>
+
+
+
+        </LinearLayout>
+
+        <TextView
+            android:textSize="15sp"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Meeting Venues"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="4"
+            android:orientation="horizontal">
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="Online"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/online"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="Home"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/home"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="Office"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/office"
+                android:layout_weight="1"/>
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="0dp"
+                android:layout_height="30dp"
+                android:background="@color/colorPrimary"
+                android:text="Clinic"
+                android:layout_margin="10dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:id="@+id/clinic"
+                android:layout_weight="1"/>
+
+
+
+
+        </LinearLayout>
+
+        <TextView
+            android:textSize="15sp"
+            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="Test"/>
-    </LinearLayout>
+            android:text=" Work Time"/>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:layout_margin="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18dp"
+                    android:text="Time: "/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:id="@+id/startTime"
+                    tools:text=" 14:00   -"/>
+
+
+                <TextView
+                    android:id="@+id/endTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+
+                    android:textStyle="bold"
+                    tools:text="  24:00"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:background="@android:color/black"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
+
+
+        </LinearLayout>
 
 
 </ScrollView>

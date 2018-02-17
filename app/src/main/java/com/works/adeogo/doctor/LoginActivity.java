@@ -1,5 +1,6 @@
 package com.works.adeogo.doctor;
 
+import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +37,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.philliphsu.numberpadtimepicker.NumberPadTimePicker;
+import com.philliphsu.numberpadtimepicker.NumberPadTimePickerDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.works.adeogo.doctor.model.DoctorProfile;
 
@@ -46,8 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final int SELECT_PICTURE = 90;
     private static final int RC_PHOTO_PICKER = 12;
-    private Button btnSignIn ;
-    private TextView btnRegister;
+    private TextView btnRegister, btnSignIn;
     private RelativeLayout mRelativeLayout;
 
     private FirebaseAuth mFirebaseAuth;
@@ -70,17 +73,9 @@ public class LoginActivity extends AppCompatActivity {
 
 
     @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/open_sans_semibold.ttf")
-                .setFontAttrId(R.attr.fontPath)
-                .build());
+
         setContentView(R.layout.activity_login);
 
         edtEmail = findViewById(R.id.edtEmail);
@@ -88,8 +83,11 @@ public class LoginActivity extends AppCompatActivity {
         mForgotPsd = findViewById(R.id.txt_view_pwd);
 
         btnSignIn = findViewById(R.id.btnSignIn);
+        btnSignIn.setFocusableInTouchMode(false);
         btnRegister = findViewById(R.id.btnRegister);
+        btnRegister.setFocusableInTouchMode(false);
         mRiderTextView = findViewById(R.id.txt_rider_app);
+        mRiderTextView.setFocusableInTouchMode(false);
         mRelativeLayout = findViewById(R.id.rootLayout);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -198,6 +196,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+
+
+
     private void showLoginDialog() {
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
@@ -217,7 +218,8 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                final android.app.AlertDialog waitingDialog = new SpotsDialog(LoginActivity.this);
+                final android.app.AlertDialog waitingDialog = new SpotsDialog(LoginActivity.this, R.style.Custom);
+
                 waitingDialog.show();
 
                 mFirebaseAuth.signInWithEmailAndPassword(edtEmail.getText().toString(), edtPassword.getText().toString())
@@ -225,7 +227,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onSuccess(AuthResult authResult) {
                                 waitingDialog.dismiss();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, NavigationStartActivity.class);
                                 startActivity(intent);
                                 finish();
                             }

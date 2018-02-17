@@ -14,17 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".LoginActivity"
             android:launchMode="singleTop"
             android:noHistory="true"
@@ -32,8 +21,10 @@
         <activity
             android:name=".QuestionActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".ActivityRegister" />
+            android:parentActivityName=".NavigationStartActivity" />
+        <activity
+            android:name=".ActivityRegister"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
@@ -48,15 +39,36 @@
 
         <activity
             android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".NavigationStartActivity" />
         <activity
             android:name=".FirstActivity"
-            android:theme="@style/LoginTheme"></activity>
+            android:theme="@style/LoginTheme" />
         <activity
             android:name=".SupportActivity"
-            android:parentActivityName=".MainActivity"></activity>
-        <activity android:name=".AppointmentActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".NavigationStartActivity" />
+        <activity
+            android:name=".AppointmentActivity"
+            android:parentActivityName=".NavigationStartActivity" />
+        <activity
+            android:name=".NavigationStartActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="370e4b0fb4b72bc94add262f681921bd88d14b8b" />
+
+        <activity android:name=".AboutActivity" />
+        <activity
+            android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ThanksActivity"></activity>
     </application>
 
 </manifest>

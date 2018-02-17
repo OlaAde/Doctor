@@ -2,7 +2,9 @@ package com.works.adeogo.doctor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -19,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -27,7 +32,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.works.adeogo.doctor.adapters.QuestionAdapter;
+import com.works.adeogo.doctor.model.ChatHead;
 import com.works.adeogo.doctor.model.Notification;
 import com.works.adeogo.doctor.model.Question;
 import com.works.adeogo.doctor.utils.FirebaseUtils;
@@ -48,25 +57,27 @@ public class QuestionActivity extends AppCompatActivity {
     //    private List<Question> mQuestionList ;
     private ListView mQuestionListView;
 
+    private ImageView mLinkImageView;
     private EditText mQuestionEditText;
     private Button mSendButton;
-    private TextView mNoInternetTextView;
-    private TextView mNoQuestionTextView;
+    private TextView mNoInternetTextView, mNoQuestionTextView;
     private LinearLayout mSendLinearLayout;
 
+    private StorageReference mChatPhotosStorageReference;
+    private FirebaseStorage mFirebaseStorage;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
-    private DatabaseReference mClientDatabaseReference;
-    private ChildEventListener mChildEventListener;
+    private DatabaseReference mDatabaseReference, mClientDatabaseReference;
+    private ChildEventListener mChildEventListener, mPhotoChildEventListener;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
 
+    private ActionBar mActionBar;
 
-    public static final int RC_SIGN_IN = 1;
-    private String mUsername;
-    private String mClientName;
-    private String userId;
-    private String mClientId;
+    public static final int RC_SIGN_IN = 1, RC_PHOTO_PICKER = 2;
+    private String mUsername, mClientName, userId, mClientId, mClientPhotoUrl, mSelfPictureUrl;
+    private int which;
+    private boolean isFromCollaborate = false;
+    private DatabaseReference mSelfDatabaseReference, mSelfChatHeadDatabaseReference, mDoctorChatHeadDatabaseReference, mDoctorDatabaseReference, mPictureRef;
 
 
     @Override
@@ -79,19 +90,26 @@ public class QuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/open_sans_semibold.ttf")
+                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
                 .setFontAttrId(R.attr.fontPath)
                 .build());
 
         setContentView(R.layout.activity_question);
 
-        getSupportActionBar().setTitle("Question");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mActionBar = getSupportActionBar();
+        mActionBar.setTitle("Question");
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+
 
         Intent intent = getIntent();
         mClientId = intent.getStringExtra("client_id");
+        isFromCollaborate = intent.getBooleanExtra("collaborate", false);
         mClientName = intent.getStringExtra("client_name");
+        mClientPhotoUrl = intent.getStringExtra("client_picture");
+        which = intent.getIntExtra("which", 0);
 
+        mActionBar.setTitle(mClientName);
+        mLinkImageView = findViewById(R.id.linkPhoto);
         mSendLinearLayout = (LinearLayout) findViewById(R.id.questionLinearLayout);
         mNoInternetTextView = (TextView) findViewById(R.id.questionNoInternetTextView);
         mNoQuestionTextView = (TextView) findViewById(R.id.questionNoQuestionsTextView);
@@ -107,6 +125,7 @@ public class QuestionActivity extends AppCompatActivity {
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseStorage = FirebaseStorage.getInstance();
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -116,9 +135,29 @@ public class QuestionActivity extends AppCompatActivity {
                     userId = user.getUid();
                     mUsername = user.getDisplayName();
 
-                    mClientDatabaseReference = mFirebaseDatabase.getReference().child("users").child(mClientId).child("questions").child(userId);
+                    if (which == 0){
+                        mClientDatabaseReference = mFirebaseDatabase.getReference().child("users").child(mClientId).child("questions").child(userId);
+                    } else {
+                        mClientDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child(userId);
+                    }
 
                     mDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" +userId + "/questions/" + mClientId);
+
+
+                    mSelfDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child(mClientId);
+
+                    mSelfChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child("chat_head").child(mClientId);
+
+                    mDoctorChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child("chat_head").child(userId);
+
+                    mDoctorDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child(userId);
+
+                    mPictureRef = mFirebaseDatabase.getReference().child("new_doctors").child(userId);
+
+
+                    mChatPhotosStorageReference = mFirebaseStorage.getReference().child("doctors").child("clients").child("chat_photos");
+
+
                     onSignedInInitialize(user.getDisplayName());
                 } else {
                     // User is signed out
@@ -162,27 +201,70 @@ public class QuestionActivity extends AppCompatActivity {
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 if (!TextUtils.isEmpty(mQuestionEditText.getText().toString())){
-                    Question question = new Question(mQuestionEditText.getText().toString().trim(), mUsername, 0);
-                    mDatabaseReference.push().setValue(question);
-                    mClientDatabaseReference.push().setValue(question);
+                    if (isFromCollaborate){
+                        Question question = new Question(mQuestionEditText.getText().toString().trim(), mUsername, 0, null);
+                        mSelfDatabaseReference.push().setValue(question);
 
-                    Notification notification = new Notification();
-                    notification.setText(mQuestionEditText.getText().toString().trim());
-                    notification.setTopic(mClientId);
-                    notification.setUid(userId);
-                    notification.setUsername(mUsername);
-                    notification.setType("0");
 
-                    FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
+                        long unixTimeStamp = NetworkUtils.getUnixTime();
+                        ChatHead selfChatHead = new ChatHead(mClientId, mClientName, mClientPhotoUrl, unixTimeStamp,    1);
+                        mSelfChatHeadDatabaseReference.setValue(selfChatHead);
 
-                    FirebaseMessaging.getInstance().subscribeToTopic(userId);
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(mClientId);
-                    // Clear input box
-                    mQuestionEditText.setText("");
+                        ChatHead doctorChatHead = new ChatHead(userId, mUsername, mSelfPictureUrl, unixTimeStamp, 1);
+
+                        mDoctorChatHeadDatabaseReference.setValue(doctorChatHead);
+                        mDoctorDatabaseReference.push().setValue(question);
+
+
+
+                        Notification notification = new Notification();
+                        notification.setText(mQuestionEditText.getText().toString().trim());
+                        notification.setTopic( mClientId);
+                        notification.setUid(userId);
+                        notification.setUsername(mUsername);
+                        notification.setType("0");
+
+                        FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
+
+                        FirebaseMessaging.getInstance().subscribeToTopic(userId);
+                        // Clear input box
+                        mQuestionEditText.setText("");
+                }else {
+                        Question question = new Question(mQuestionEditText.getText().toString().trim(), mUsername, 0, null);
+                        mDatabaseReference.push().setValue(question);
+                        mClientDatabaseReference.push().setValue(question);
+
+                        Notification notification = new Notification();
+                        notification.setText(mQuestionEditText.getText().toString().trim());
+                        notification.setTopic(mClientId);
+                        notification.setUid(userId);
+                        notification.setUsername(mUsername);
+                        notification.setType("0");
+
+                        FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
+
+                        FirebaseMessaging.getInstance().subscribeToTopic(userId);
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(mClientId);
+                        // Clear input box
+                        mQuestionEditText.setText("");
+                    }
+
                 }else {
                     Toast.makeText(QuestionActivity.this, "Enter a question", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        mLinkImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
             }
         });
     }
@@ -210,6 +292,8 @@ public class QuestionActivity extends AppCompatActivity {
                         question.setYou(1);
                     }
                     mAdapter.add(question);
+
+
                 }
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
                 public void onChildRemoved(DataSnapshot dataSnapshot) {}
@@ -218,6 +302,24 @@ public class QuestionActivity extends AppCompatActivity {
             };
             mDatabaseReference.addChildEventListener(mChildEventListener);
         }
+
+        if (mPhotoChildEventListener == null) {
+            mPhotoChildEventListener = new ChildEventListener() {
+
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    String key = dataSnapshot.getKey().toString();
+                    if (TextUtils.equals(key, "photoUrl")){
+                        mSelfPictureUrl = dataSnapshot.getValue().toString();
+                    }
+                }
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+                public void onChildRemoved(DataSnapshot dataSnapshot) {}
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+                public void onCancelled(DatabaseError databaseError) {}
+            };
+            mPictureRef.addChildEventListener(mPhotoChildEventListener);
+        }
     }
 
     private void detachDatabaseReadListener() {
@@ -225,6 +327,8 @@ public class QuestionActivity extends AppCompatActivity {
             mDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
+
+        mAdapter.clear();
     }
 
     @Override
@@ -239,6 +343,53 @@ public class QuestionActivity extends AppCompatActivity {
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
             }
+        }
+
+        else if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+            Uri selectedImageUri = data.getData();
+
+            // Get a reference to store file at chat_photos/<FILENAME>
+            StorageReference photoRef = mChatPhotosStorageReference.child(selectedImageUri.getLastPathSegment());
+
+            // Upload file to Firebase Storage
+            photoRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // When the image has successfully uploaded, we get its download URL
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+
+                            Question question = new Question(null, mUsername, 0, downloadUrl.toString());
+                            mDatabaseReference.push().setValue(question);
+                            mClientDatabaseReference.push().setValue(question);
+
+                            Notification notification = new Notification();
+                            notification.setText(mQuestionEditText.getText().toString().trim());
+                            notification.setTopic(mClientId);
+                            notification.setUid(userId);
+                            notification.setUsername(mUsername);
+                            notification.setType("0");
+
+                            FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
+
+                            FirebaseMessaging.getInstance().subscribeToTopic(userId);
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic(mClientId);
+
+
+//                            // Set the download URL to the message box, so that the user can send it to the database
+//                            FriendlyMessage friendlyMessage = new FriendlyMessage(null, mUsername, downloadUrl.toString());
+//                            mMessagesDatabaseReference.push().setValue(friendlyMessage);
+                            System.out.println("On Success!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            System.out.println("OnFailureListener: " + e);
+                            e.printStackTrace();
+                        }
+                    });
         }
     }
 

@@ -6,7 +6,7 @@ package com.works.adeogo.doctor.model;
 
 
 public class Appointment {
-    private String UserId, DoctorId, Time, DoctorPhone, ClientPhone, DoctorName, ClientName, Location, Message;
+    private String UserId, DoctorId, Time, DoctorPhone, ClientPhone, DoctorName, ClientName, Location, Message, ImageUrl;
     private int Year, Month, Day, Status;
 
 
@@ -22,7 +22,7 @@ public class Appointment {
     }
 
     public Appointment(String userId, String doctorId, String time, int year, int month,
-                       int day, String doctorPhone, String clientPhone, String doctorName, String clientName, String location, int status, String message){
+                       int day, String doctorPhone, String clientPhone, String doctorName, String clientName, String location, int status, String message, String imageUrl){
         UserId = userId;
         DoctorId = doctorId;
         Time = time;
@@ -36,6 +36,15 @@ public class Appointment {
         Location = location;
         Status = status;
         Message = message;
+        ImageUrl = imageUrl;
+    }
+
+    public String getImageUrl() {
+        return ImageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        ImageUrl = imageUrl;
     }
 
     public void setMessage(String message) {

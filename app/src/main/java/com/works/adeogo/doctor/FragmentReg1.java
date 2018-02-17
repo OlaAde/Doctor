@@ -7,7 +7,9 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,8 @@ import net.rimoto.intlphoneinput.IntlPhoneInput;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Adeogo on 11/20/2017.
@@ -31,11 +35,13 @@ import java.util.List;
 
 public class FragmentReg1 extends Fragment implements BlockingStep {
 
-    private MaterialEditText mEmailEDT, mPasswordEDT, mNameEDT;
+    private MaterialEditText mEmailEDT, mPasswordEDT, mRePassword, mNameEDT;
     private IntlPhoneInput mIntlPhoneInput;
     private LinearLayout mLayout;
     private SendMessage SM;
     private String phoneNumber;
+    private String mPasswordEntered;
+    private boolean mConfirmed = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,11 +49,70 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
 
         mEmailEDT = v.findViewById(R.id.edtEmail);
         mPasswordEDT = v.findViewById(R.id.edtPassword);
+        mRePassword = v.findViewById(R.id.edtRePassword);
         mNameEDT = v.findViewById(R.id.edtName);
         mIntlPhoneInput = v.findViewById(R.id.phoneInput);
 
         mLayout = v.findViewById(R.id.reg_rootLayout);
         //initialize your UI
+
+        mRePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mPasswordEntered = mPasswordEDT.getText().toString();
+            }
+        });
+
+
+        mRePassword.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mPasswordEntered = mPasswordEDT.getText().toString();
+                if (charSequence.toString().trim().length() > 0) {
+                    if (!TextUtils.equals(mPasswordEntered, charSequence.toString())){
+                        mConfirmed = false;
+                        mRePassword.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
+                    }else {
+                        mConfirmed = true;
+                        mRePassword.setTextColor(getActivity().getResources().getColor(R.color.black));
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        mEmailEDT.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String email = mEmailEDT.getText().toString();
+                if (charSequence.toString().trim().length() > 0) {
+                    if (!isEmailValid(email)){
+                        mEmailEDT.setTextColor(getActivity().getResources().getColor(R.color.colorRed));
+                    }else {
+                        mEmailEDT.setTextColor(getActivity().getResources().getColor(R.color.black));
+                    }
+                } else {
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
 
         return v;
     }
@@ -59,11 +124,17 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
             return false;
         }
 
+        if (!isEmailValid(mEmailEDT.getText().toString())){
+            Toast.makeText(getActivity(), "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         if (TextUtils.isEmpty(mNameEDT.getText().toString())){
             Toast.makeText(getActivity(), "Please enter phone number", Toast.LENGTH_SHORT).show();
 
             return false;
         }
+
 
         if (TextUtils.isEmpty(mPasswordEDT.getText().toString())){
             Toast.makeText(getActivity(), "Please enter password", Toast.LENGTH_SHORT).show();
@@ -74,6 +145,11 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
         if (mPasswordEDT.getText().toString().length()< 6){
 
             Toast.makeText(getActivity(), "Password too short !!!", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        if (!mConfirmed){
+            Toast.makeText(getActivity(), "Confirm Password!", Toast.LENGTH_SHORT).show();
             return false;
         }
 
@@ -142,5 +218,12 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
     @Override
     public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
 
+    }
+
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }

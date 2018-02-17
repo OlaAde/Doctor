@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.works.adeogo.doctor.adapters.AppointmentAdapter;
 import com.works.adeogo.doctor.model.Appointment;
 
@@ -50,21 +52,13 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
 
     private List<Appointment> mList = new ArrayList<>();
     private List<String> mKeyList = new ArrayList<>();
-    private String userId;
-    private String mUsername;
+    private String userId, mUsername, mDoctorName, mClientName, mLocation;
 
-    private String mUserId, mDoctorPhone, mClientPhone, mMessage;
-    private String mDoctorId;
-    private String mTime;
-    private int mYear;
-    private int mMonth;
-    private int mDay;
-    private String mDoctorName;
-    private String mClientName;
-    private String mLocation;
-    private int mStatus;
+    private String mUserId, mDoctorPhone, mClientPhone, mMessage, mDoctorId, mTime;
 
+    private int mStatus, mYear, mMonth, mDay;
 
+    private ProgressBar mProgressBar;
 
     public AppointmentFragment() {
         // Required empty public constructor
@@ -80,6 +74,7 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
         mNoResults = rootView.findViewById(R.id.tvNoResultMessages);
 
         mRecyclerView = rootView.findViewById(R.id.appointment_recycler);
+        mProgressBar = rootView.findViewById(R.id.progressBar);
 
         mManager = new LinearLayoutManager(getActivity());
         mAdapter = new AppointmentAdapter(getActivity(), this);
@@ -123,6 +118,24 @@ public class AppointmentFragment extends Fragment implements AppointmentAdapter.
     }
 
     private void attachDatabaseReadListener() {
+
+        mAppointmentQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    mProgressBar.setVisibility(View.GONE);
+                }else {
+                    mProgressBar.setVisibility(View.GONE);
+                    mNoResults.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
                 @Override

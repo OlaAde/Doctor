@@ -3,26 +3,29 @@
 <resources>
     <string-array name="countries">
         <item>Select</item>
-        <item>Uganda</item>
+        <item>Ghana</item>
         <item>Nigeria</item>
         <item>Russia</item>
+        <item>Uganda</item>
+        <item>Zambia</item>
+
     </string-array>
 
     <string-array name="ugandan_cities">
         <item>Select</item>
-        <item>Mbarara</item>
         <item>Entebbe</item>
-        <item>Kampala</item>
         <item>Gulu</item>
+        <item>Kampala</item>
+        <item>Mbarara</item>
         <item>Wakiso</item>
     </string-array>
 
     <string-array name="nigerian_cities">
         <item>Select</item>
-        <item>Warri</item>
         <item>Abuja</item>
-        <item>Lagos</item>
         <item>Ado-Ekiti</item>
+        <item>Lagos</item>
+        <item>Warri</item>
     </string-array>
 
     <string-array name="russian_cities">
@@ -31,25 +34,43 @@
         <item>Moscow</item>
     </string-array>
 
+    <string-array name="zambian_cities">
+        <item>Select</item>
+        <item>Chipata</item>
+        <item>Kafue</item>
+        <item>LivingStone</item>
+        <item>Lusaka</item>
+        <item>Mansa</item>
+        <item>Mongu</item>
+        <item>Ndola</item>
+    </string-array>
+
+    <string-array name="ghanian_cities">
+        <item>Select</item>
+        <item>Accra</item>
+        <item>CapeCoast</item>
+        <item>Kumasi</item>
+    </string-array>
+
     <string-array name="specialities">
         <item>Select</item>
-        <item>Nurse</item>
-        <item>Gen Health Professional</item>
         <item>Cardiologist</item>
         <item>Dentist</item>
         <item>Dermatologist</item>
         <item>Diabetologist</item>
-        <item>Digestive surgeon</item>
+        <item>Gen Health Professional</item>
         <item>General Physiciain</item>
         <item>General Surgeon</item>
         <item>Geneticist</item>
         <item>Gynecologist</item>
         <item>Herpetologist</item>
+        <item>Nurse</item>
         <item>Oncologist</item>
         <item>Ophthalmologist</item>
         <item>Paediatrician</item>
         <item>Plastic Surgeon</item>
         <item>Veterinarian</item>
+        <item>Others</item>
     </string-array>
 
     <string-array name="titles">

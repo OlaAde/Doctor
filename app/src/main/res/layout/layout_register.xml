@@ -10,20 +10,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/reg_rootLayout">
+        android:id="@+id/reg_rootLayout"
+        android:gravity="center"
+        android:layout_gravity="center">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Email Sign in:"
-            android:textSize="15sp"
-            android:layout_margin="20dp"/>
+            android:text="Email Sign up:"
+            android:textSize="27sp"
+            android:layout_margin="20dp"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/shree"/>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="5dp"
-            android:layout_margin="8dp">
+            android:layout_margin="8dp"
+
+            app:cardElevation="1dp"
+            app:cardBackgroundColor="@color/slight_transparent_white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -32,15 +38,18 @@
                 android:layout_margin="20dp">
 
                 <com.rengwuxian.materialedittext.MaterialEditText
+                    android:fontFamily="@font/shree"
                     android:id="@+id/edtEmail"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
                     android:textColor="@color/colorPrimary"
                     android:textColorHint="@color/colorPrimary"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold" />
 
                 <com.rengwuxian.materialedittext.MaterialEditText
+                    android:fontFamily="@font/shree"
                     android:id="@+id/edtPassword"
                     android:hint="Password"
                     android:inputType="textPassword"
@@ -48,13 +57,29 @@
                     android:textColorHint="@color/colorPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
 
                     app:met_floatingLabel="highlight"
-                    app:met_baseColor="@color/colorPrimary"
                     app:met_singleLineEllipsis="true"
                     app:met_primaryColor="@color/colorPrimary"/>
 
                 <com.rengwuxian.materialedittext.MaterialEditText
+                    android:fontFamily="@font/shree"
+                    android:id="@+id/edtRePassword"
+                    android:hint="Confirm Password"
+                    android:inputType="textPassword"
+                    android:textColor="@color/colorPrimary"
+                    android:textColorHint="@color/colorPrimary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+
+                    app:met_floatingLabel="highlight"
+                    app:met_singleLineEllipsis="true"
+                    app:met_primaryColor="@color/colorPrimary"/>
+
+                <com.rengwuxian.materialedittext.MaterialEditText
+                    android:fontFamily="@font/shree"
                     android:id="@+id/edtName"
                     android:hint="Name"
                     android:inputType="textCapWords"
@@ -62,13 +87,14 @@
                     android:textColorHint="@color/colorPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textStyle="bold"
 
                     app:met_floatingLabel="highlight"
-                    app:met_baseColor="@color/colorPrimary"
                     app:met_singleLineEllipsis="true"
                     app:met_primaryColor="@color/colorPrimary"/>
 
                 <net.rimoto.intlphoneinput.IntlPhoneInput
+                    android:fontFamily="@font/shree"
                     android:id="@+id/phoneInput"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">

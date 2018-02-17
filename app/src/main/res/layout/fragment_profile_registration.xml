@@ -19,11 +19,29 @@
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
             android:text="Profile Details"
-            android:textSize="15sp" />
+            android:textSize="27sp"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/shree"/>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="250dp">
+
+
+
+            <com.jackandphantom.circularprogressbar.CircleProgressbar
+                android:id="@+id/progressBarImageView"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:layout_gravity="center"
+
+                app:cpb_progress="0"
+                app:cpb_backgroundProgressWidth="2"
+                app:cpb_backgroundProgressColor="@android:color/white"
+                app:cpb_roundedCorner="true"
+                app:cpb_foregroundProgressWidth="15"
+                app:cpb_foregroundProgressColor="@color/colorApproved"
+                app:cpb_touchEnabled="true"/>
 
             <ImageView
                 android:id="@+id/imvPickImage"
@@ -34,22 +52,10 @@
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/ic_add_a_photo_black_24dp" />
 
-            <com.jackandphantom.circularprogressbar.CircleProgressbar
-                android:id="@+id/progressBarImageView"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_gravity="center"
-                app:cpb_progress="50"
-                app:cpb_roundedCorner="true"
-                app:cpb_foregroundProgressWidth="15"
-                app:cpb_foregroundProgressColor="#1864c2"
-                app:cpb_touchEnabled="true"/>
-
-
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imvFinalImage"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="240dp"
+                android:layout_height="240dp"
                 android:layout_margin="10dp"
                 android:layout_gravity="center"
                 android:visibility="gone"
@@ -59,46 +65,44 @@
         </FrameLayout>
 
         <android.support.v7.widget.CardView
+            android:layout_marginTop="25dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardElevation="5dp"
-            android:layout_margin="8dp">
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+
+            app:cardElevation="1dp"
+            app:cardBackgroundColor="@color/slight_transparent_white">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!--<LinearLayout-->
-                <!--android:layout_marginBottom="10dp"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:weightSum="5"-->
-                <!--android:padding="8dp">-->
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+                    <RadioButton
+                        android:layout_weight="1"
+                        android:id="@+id/radio_male"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/male"/>
 
-                <!--<TextView-->
-                <!--android:id="@+id/tvPickPhoto"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Image:"-->
-                <!--android:textSize="18sp"-->
-                <!--android:layout_weight="4"/>-->
-
-                <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:src="@drawable/ic_mode_edit_black_24px"-->
-                <!--android:layout_weight="1"/>-->
-
-                <!--</LinearLayout>-->
-
+                    <RadioButton
+                        android:layout_weight="1"
+                        android:id="@+id/radio_female"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/female"/>
+                </RadioGroup>
                 <LinearLayout
                     android:layout_marginBottom="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="8"
                     android:padding="8dp"
                     android:layout_marginTop="6dp">
 
@@ -109,14 +113,18 @@
                         android:textSize="18sp"
                         android:layout_weight="4"
                         android:ellipsize="end"
-                        android:maxLines="1"/>
+                        android:maxLines="1"
+                        android:fontFamily="@font/shree"/>
 
                     <Spinner
                         android:id="@+id/imvSelectSpeciality"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textAlignment="center"
-                        android:layout_weight="4" />
+                        android:layout_weight="4"
+                        android:fontFamily="@font/shree"
+
+                        />
                 </LinearLayout>
 
                 <LinearLayout
@@ -133,13 +141,15 @@
                         android:layout_height="wrap_content"
                         android:text="Country:"
                         android:textSize="18sp"
-                        android:layout_weight="4"/>
+                        android:layout_weight="4"
+                        android:fontFamily="@font/shree"/>
 
                     <Spinner
                         android:id="@+id/imvPickCountry"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        android:fontFamily="@font/shree"/>
 
                 </LinearLayout>
 
@@ -154,6 +164,7 @@
                     android:layout_marginTop="6dp">
 
                     <TextView
+                        android:fontFamily="@font/shree"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="City:"
@@ -164,7 +175,8 @@
                         android:id="@+id/imvPickCity"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1"
+                        android:fontFamily="@font/shree"/>
 
                 </LinearLayout>
             </LinearLayout>

@@ -10,7 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -20,7 +19,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 import com.works.adeogo.doctor.model.Appointment;
-import com.works.adeogo.doctor.model.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -32,7 +30,7 @@ public class AppointmentActivity extends AppCompatActivity {
     private DatabaseReference mAppointmentDatabaseReference, mClientAppointReference, mProfileDatabaseReference;
     private ChildEventListener mProfileListener;
 
-    private String mKey, mPhoneNumber = "2392895175215", mProfileImageUrl;
+    private String mKey, mPhoneNumber , mProfileImageUrl;
 
     private CircleImageView mCircleImageView;
     private ImageView mDialImageView;
@@ -69,7 +67,7 @@ public class AppointmentActivity extends AppCompatActivity {
 
         mAppointmentDatabaseReference = FirebaseDatabase.getInstance().getReference("new_doctors").child(mDoctorId).child("appointments").child("appointments").child(mKey);
         mProfileDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users/" + mUserId);
-        mClientAppointReference = FirebaseDatabase.getInstance().getReference().child("users").child("appointments");
+        mClientAppointReference = FirebaseDatabase.getInstance().getReference().child("users").child(mUserId).child("appointments").child(mKey);
 
         mClientNameTextView.setText(mClientName);
         mClientPhoneNumber.setText(mPhoneNumber);
@@ -97,17 +95,20 @@ public class AppointmentActivity extends AppCompatActivity {
 
                     if (TextUtils.equals(dataSnapshot.getKey(), "photoUrl")){
                         mProfileImageUrl = dataSnapshot.getValue().toString();
+
+                        Picasso.with(AppointmentActivity.this)
+                                .load(mProfileImageUrl)
+                                .resize(500, 500)
+                                .centerCrop()
+                                .into(mCircleImageView);
                     }else if (TextUtils.equals(dataSnapshot.getKey(), "phone")){
                         mPhoneNumber = dataSnapshot.getValue().toString();
+                        mClientPhoneNumber.setText(mPhoneNumber);
                     }
 
-                    mClientPhoneNumber.setText(mPhoneNumber);
 
-                    Picasso.with(AppointmentActivity.this)
-                            .load(mProfileImageUrl)
-                            .resize(500, 500)
-                            .centerCrop()
-                            .into(mCircleImageView);
+
+
                 }
 
                 @Override
@@ -138,7 +139,12 @@ public class AppointmentActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_appointment, menu);
+
+        if (mStatus != 0){
+            getMenuInflater().inflate(R.menu.menu_appointment_completed, menu);
+        }else {
+            getMenuInflater().inflate(R.menu.menu_appointment_pending, menu);
+        }
         return true;
     }
 
@@ -151,12 +157,12 @@ public class AppointmentActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_accept) {
-            final Intent intent = new Intent(AppointmentActivity.this, MainActivity.class);
+            final Intent intent = new Intent(AppointmentActivity.this, NavigationStartActivity.class);
             intent.putExtra("start", true);
 
-            Appointment appointment = new Appointment(mUserId, mDoctorId, mTime, mYear, mMonth, mDay, mDoctorPhone, mClientPhone, mDoctorName, mClientName, mLocation, 1, mMessage);
+            Appointment appointment = new Appointment(mUserId, mDoctorId, mTime, mYear, mMonth, mDay, mDoctorPhone, mClientPhone, mDoctorName, mClientName, mLocation, 1, mMessage, null);
 
-
+            mClientAppointReference.setValue(appointment);
             mAppointmentDatabaseReference.setValue(appointment).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
@@ -168,9 +174,9 @@ public class AppointmentActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_decline) {
-            final Intent intent = new Intent(AppointmentActivity.this, MainActivity.class);
+            final Intent intent = new Intent(AppointmentActivity.this, NavigationStartActivity.class);
             intent.putExtra("start", true);
-            Appointment appointment = new Appointment(mUserId, mDoctorId, mTime, mYear, mMonth, mDay, mDoctorPhone, mClientPhone, mDoctorName, mClientName, mLocation, 2, mMessage);
+            Appointment appointment = new Appointment(mUserId, mDoctorId, mTime, mYear, mMonth, mDay, mDoctorPhone, mClientPhone, mDoctorName, mClientName, mLocation, 2, mMessage, null);
 
 
             mClientAppointReference.setValue(appointment);
@@ -184,6 +190,21 @@ public class AppointmentActivity extends AppCompatActivity {
             return true;
         }
 
+        if (id == R.id.action_completed) {
+            final Intent intent = new Intent(AppointmentActivity.this, NavigationStartActivity.class);
+            intent.putExtra("start", true);
+            Appointment appointment = new Appointment(mUserId, mDoctorId, mTime, mYear, mMonth, mDay, mDoctorPhone, mClientPhone, mDoctorName, mClientName, mLocation, 3, mMessage, null);
+
+            mClientAppointReference.setValue(appointment);
+            mAppointmentDatabaseReference.setValue(appointment).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    startActivity(intent);
+                }
+            });
+
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

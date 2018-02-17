@@ -1,0 +1,81 @@
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:padding="16dp"
+
+    app:cardElevation="1dp"
+    app:cardCornerRadius="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:orientation="horizontal"
+        android:weightSum="8">
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_marginRight="5dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_weight="3"
+            android:scaleType="centerCrop"
+            android:src="@drawable/background" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5">
+
+            <TextView
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                android:id="@+id/doctorName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Doctor Gashniya"
+                android:fontFamily="@font/roboto_regular"/>
+
+            <TextView
+                android:paddingRight="3dp"
+                android:textStyle="italic"
+                android:fontFamily="@font/roboto_thin"
+                android:layout_below="@+id/doctorName"
+                android:id="@+id/doctorSpeciality"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="General Surgeon"/>
+            <TextView
+                android:id="@+id/aboutDoctor"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="A passion filled doctor who knows his onions"/>
+
+            <TextView
+                android:fontFamily="@font/roboto_condensed_regular"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/textViewMessage"
+                android:background="@drawable/curved_button_background_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:text="MESSAGE"
+                android:textColor="@color/colorApproved"
+                android:layout_alignParentBottom="true"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_margin="5dp" />
+        </RelativeLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/doctors_login_bkg_img"
+    android:id="@+id/rootLayout"
+    tools:context=".LoginActivity">
+
+
+    <LinearLayout
+        android:id="@+id/dokitari_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:fontFamily="@font/vtks_rascunho_errado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dokitari"
+            android:textSize="90sp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:layout_marginBottom="-10dp"/>
+
+        <TextView
+            android:fontFamily="@font/james_fajardo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/doctor_app"
+            android:textSize="60sp"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginRight="@dimen/login_margin"
+            android:layout_marginLeft="@dimen/login_margin"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="40dp">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edtEmail"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+
+                android:fontFamily="@font/shree"
+                app:met_floatingLabel="highlight"
+                app:met_textColorHint="@android:color/white"
+                app:met_baseColor="@android:color/white"
+                app:met_singleLineEllipsis="true"
+                app:met_primaryColor="@android:color/white"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:fontFamily="@font/shree"
+                android:id="@+id/edtPassword"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:textColor="@color/colorPrimary"
+                android:textColorHint="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:paddingBottom="-10dp"
+
+                app:met_textColorHint="@android:color/white"
+                app:met_textColor="@android:color/white"
+                app:met_floatingLabel="highlight"
+                app:met_baseColor="@android:color/white"
+                app:met_singleLineEllipsis="true"
+                app:met_primaryColor="@android:color/white"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:fontFamily="@font/shree"
+                android:layout_margin="5dp"
+                android:textSize="15sp"
+                android:layout_above="@+id/txt_rider_app"
+                android:gravity="center_horizontal|right"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@android:color/white"
+                android:text="forgot password?"
+                android:id="@+id/txt_view_pwd"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:fontFamily="@font/shree"
+        android:layout_marginTop="15dp"
+        android:textSize="20sp"
+        android:layout_marginLeft="@dimen/login_margin"
+        android:layout_marginRight="@dimen/login_margin"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:text="LOGIN"
+        android:background="@drawable/curved_button_login"
+        android:textColor="@color/colorPrimary"
+        android:id="@+id/btnSignIn"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/dokitari_layout" />
+
+
+
+    <LinearLayout
+        android:id="@+id/signup_line"
+        android:layout_marginLeft="@dimen/login_margin"
+        android:layout_marginRight="@dimen/login_margin"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3"
+        android:gravity="center|center_vertical">
+
+        <View
+            android:background="@android:color/white"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"/>
+
+        <TextView
+            android:fontFamily="@font/shree"
+            android:textSize="20sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="or signup"
+            android:paddingBottom="5dp"/>
+
+        <View
+            android:background="@android:color/white"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:fontFamily="@font/shree"
+        android:layout_marginTop="15dp"
+        android:textSize="20sp"
+        android:layout_marginLeft="@dimen/login_margin"
+        android:layout_marginRight="@dimen/login_margin"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:text="SIGN UP"
+        android:background="@drawable/curved_button_login"
+        android:textColor="@color/colorPrimary"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/signup_line"
+        android:id="@+id/btnRegister" />
+
+    <TextView
+        android:fontFamily="@font/shree"
+        android:id="@+id/txt_rider_app"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:autoLink="web"
+        android:textAlignment="center"
+        android:text="Looking for the Client App?"
+        android:textColor="@android:color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
+
+
+

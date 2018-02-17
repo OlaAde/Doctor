@@ -1,5 +1,6 @@
 package com.works.adeogo.doctor;
 
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -9,6 +10,8 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -21,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.philliphsu.numberpadtimepicker.NumberPadTimePickerDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.works.adeogo.doctor.model.DoctorProfile;
 import com.works.adeogo.doctor.model.Notification;
@@ -32,31 +36,18 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private MaterialEditText mNameMaterialEditText;
-    private MaterialEditText mPhoneNumberMaterialEditText;
-    private MaterialEditText mLowestMaterialEditText;
-    private MaterialEditText mHighestMaterialEditText;
-    private MaterialEditText mSpecialMaterialEditText;
+    private MaterialEditText mNameMaterialEditText, mPhoneNumberMaterialEditText, mSpecialMaterialEditText;
+
+    private TextView mSundayDateTextView, mMondayDateTextView, mTuesdayDateTextView, mWednesdayDateTextView, mThursdayDateTextView, mFridayDateTextView, mSaturdayDateTextView, mStartTimeTextView, mEndTimeTextView,
+            mOnlineTextView, mHomeTextView, mOfficeTextView, mClinicTextView;
 
     public static final String ANONYMOUS = "anonymous";
-    private String mUsername;
-    private String userId;
+    private String mUsername, userId;
 
     private DoctorProfile mDoctorProfile;
 
-    private String mPictureUrl = "";
-    private String mPhoneNumber = "";
-    private String mDoctorName = "";
-    private String mEmail = "";
-    private String mPassword = "";
-    private String mCountry = "";
-    private String mCity = "";
-    private String mSpeciality = "";
-    private String mDoctorId = "";
-    private String mLowest = "";
-    private String mHighest = "";
-    private String mSpecial = "";
-
+    private String mPictureUrl = "",  mPhoneNumber = "", mDoctorName = "", mEmail = "", mPassword = "", mCountry = "", mCity = "", mSpeciality = "", mDoctorId = "", mSpecial = "";
+    private int sunday = 0, monday = 0, tuesday = 0, wednesday = 0, thursday = 0, friday = 0, saturday = 0, startHour, startMinute, endHour, endMinute, online = 0, home = 0, office = 0, clinic = 0;
 
     private android.app.AlertDialog mWaitingDialog;
 
@@ -64,7 +55,7 @@ public class SettingsActivity extends AppCompatActivity {
     private FirebaseAuth mFirebaseAuth;
 
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mProfileDatabaseReference;
+    private DatabaseReference mProfileDatabaseReference, mAllProfileReference;
     private ChildEventListener mChildEventListener;
 
 
@@ -79,7 +70,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-                .setDefaultFontPath("fonts/open_sans_semibold.ttf")
+                .setDefaultFontPath("fonts/Roboto-Regular.ttf")
                 .setFontAttrId(R.attr.fontPath)
                 .build());
 
@@ -90,9 +81,40 @@ public class SettingsActivity extends AppCompatActivity {
         mWaitingDialog.show();
         mNameMaterialEditText = findViewById(R.id.edtSettingsName);
         mPhoneNumberMaterialEditText = findViewById(R.id.edtSettingsNumber);
-        mLowestMaterialEditText = findViewById(R.id.edtSettingsLow);
-        mHighestMaterialEditText = findViewById(R.id.edtSettingsHighest);
+
         mSpecialMaterialEditText = findViewById(R.id.edtSettingsSpecial);
+
+        mSundayDateTextView = findViewById(R.id.sunday);
+        mMondayDateTextView = findViewById(R.id.monday);
+        mTuesdayDateTextView = findViewById(R.id.tuesday);
+        mWednesdayDateTextView = findViewById(R.id.wednesday);
+        mThursdayDateTextView = findViewById(R.id.thursday);
+        mFridayDateTextView = findViewById(R.id.friday);
+        mSaturdayDateTextView = findViewById(R.id.saturday);
+
+        mOnlineTextView = findViewById(R.id.online);
+        mHomeTextView = findViewById(R.id.home);
+        mOfficeTextView = findViewById(R.id.office);
+        mClinicTextView = findViewById(R.id.clinic);
+
+        mStartTimeTextView = findViewById(R.id.startTime);
+        mEndTimeTextView = findViewById(R.id.endTime);
+
+        mStartTimeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NumberPadTimePickerDialog timePicker = new NumberPadTimePickerDialog(SettingsActivity.this, mStartTimeListener, true);
+                timePicker.show();
+            }
+        });
+
+        mEndTimeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NumberPadTimePickerDialog timePicker = new NumberPadTimePickerDialog(SettingsActivity.this, mStartTimeListener, true);
+                timePicker.show();
+            }
+        });
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -106,6 +128,8 @@ public class SettingsActivity extends AppCompatActivity {
                     userId = user.getUid();
                     FirebaseMessaging.getInstance().subscribeToTopic(userId);
                     mProfileDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("profile").child("profile");
+                    mAllProfileReference = mFirebaseDatabase.getReference().child("new_doctors/" + "all_profiles/" + userId );
+
                     onSignedInInitialize(user.getDisplayName());
                 } else {
                     // User is signed out
@@ -116,7 +140,28 @@ public class SettingsActivity extends AppCompatActivity {
             }
         };
 
+        setDayClickListener();
+        setVenueClickListener();
     }
+
+    private TimePickerDialog.OnTimeSetListener mStartTimeListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            startHour = hourOfDay;
+            startMinute = minute;
+            mStartTimeTextView.setText(startHour+":"+startMinute + "  -  ");
+        }
+    };
+
+    private TimePickerDialog.OnTimeSetListener mEndTimeListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            endHour = hourOfDay;
+            endMinute = minute;
+            mEndTimeTextView.setText(endHour+":"+endMinute);
+        }
+    };
+
 
     private void onSignedInInitialize(String username) {
         mUsername = username;
@@ -147,15 +192,45 @@ public class SettingsActivity extends AppCompatActivity {
                     mCity = doctorProfile.getCity();
                     mSpeciality = doctorProfile.getSpeciality();
                     mDoctorId = doctorProfile.getDoctorId();
-                    mLowest = doctorProfile.getLowestCost();
-                    mHighest = doctorProfile.getHighestCost();
-                    mSpecial = doctorProfile.getSpecialCost();
+                    mSpecial = doctorProfile.getConsultationFee();
+
+                    sunday = doctorProfile.getSunday();
+                    monday = doctorProfile.getMonday();
+                    tuesday = doctorProfile.getTuesday();
+                    wednesday = doctorProfile.getWednesday();
+                    thursday = doctorProfile.getThursday();
+                    friday = doctorProfile.getFirday();
+                    saturday = doctorProfile.getSaturday();
+                    startHour = doctorProfile.getStartHour();
+                    startMinute = doctorProfile.getStartMinute();
+                    endHour = doctorProfile.getEndHour();
+                    endMinute = doctorProfile.getEndMinute();
+
+                    online = doctorProfile.getOnlineConsult();
+                    home = doctorProfile.getHomeVisit();
+                    office = doctorProfile.getOfficeVisit();
+                    clinic = doctorProfile.getClinic();
+
 
                     mNameMaterialEditText.setText(mDoctorName);
                     mPhoneNumberMaterialEditText.setText(mPhoneNumber);
-                    mLowestMaterialEditText.setText(mLowest);
-                    mHighestMaterialEditText.setText(mHighest);
                     mSpecialMaterialEditText.setText(mSpecial);
+
+                    mStartTimeTextView.setText(startHour+":"+startMinute  + "  -  ");
+                    mEndTimeTextView.setText(endHour+":"+endMinute);
+
+                    updateDateColor();
+                    updateVenueColor();
+
+
+                    if (startMinute < 10){
+                        mStartTimeTextView.setText(startHour+":0"+startMinute  + "  -  ");
+                    }else mEndTimeTextView.setText(startHour+":"+startMinute  + "  -  ");
+
+                    if (endMinute < 10){
+                        mEndTimeTextView.setText(endHour+":0"+endMinute);
+                    }else
+                        mEndTimeTextView.setText(endHour+":"+endMinute);
 
                 }
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
@@ -173,6 +248,236 @@ public class SettingsActivity extends AppCompatActivity {
             mChildEventListener = null;
         }
     }
+
+    private void setDayClickListener(){
+        mSundayDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (sunday == 0){
+                    sunday = 1;
+                }else if (sunday == 1){
+                    sunday = 0;
+                }
+
+                updateDateColor();
+            }
+        });
+
+        mMondayDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (monday == 0){
+                    monday = 1;
+                }else if (monday == 1){
+                    monday = 0;
+                }
+                updateDateColor();
+            }
+        });
+
+        mTuesdayDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (tuesday == 0){
+                    tuesday = 1;
+                }else if (tuesday == 1){
+                    tuesday = 0;
+                }
+
+                updateDateColor();
+            }
+        });
+
+        mWednesdayDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (wednesday == 0){
+                    wednesday = 1;
+                }else if (wednesday == 1){
+                    wednesday = 0;
+                }
+
+                updateDateColor();
+            }
+        });
+
+        mThursdayDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (thursday == 0){
+                    thursday = 1;
+                }else if (thursday == 1){
+                    thursday = 0;
+                }
+
+                updateDateColor();
+            }
+        });
+
+        mFridayDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (friday == 0){
+                    friday = 1;
+                }else if (friday == 1){
+                    friday = 0;
+                }
+
+                updateDateColor();
+            }
+        });
+
+        mSaturdayDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (saturday == 0){
+                    saturday = 1;
+                }else if (saturday == 1){
+                    saturday = 0;
+                }
+
+                updateDateColor();
+            }
+        });
+    }
+
+    private void updateDateColor(){
+
+                if (sunday == 1){
+                    mSundayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+                }else if (sunday == 0){
+                    mSundayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+                }
+
+                if (monday == 1){
+                    mMondayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+                }else if (monday == 0){
+                    mMondayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+                }
+
+
+                if (tuesday == 1){
+                    mTuesdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+                }else if (tuesday == 0){
+                    mTuesdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+                }
+
+                if (wednesday == 1){
+                    mWednesdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+                }else if (wednesday == 0){
+                    mWednesdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+                }
+
+
+                if (thursday == 1){
+                    mThursdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+                }else if (thursday == 0){
+                    mThursdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+                }
+
+
+
+
+                if (friday == 1){
+                    mFridayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+                }else if (friday == 0){
+                    mFridayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+                }
+
+                if (saturday == 1){
+                    mSaturdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+                }else if (saturday == 0){
+                    mSaturdayDateTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+                }
+    }
+
+    private void updateVenueColor(){
+
+        if (online == 1){
+            mOnlineTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (online == 0){
+            mOnlineTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (home == 1){
+            mHomeTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (home == 0){
+            mHomeTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+
+        if (office == 1){
+            mOfficeTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (office == 0){
+            mOfficeTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+        if (clinic == 1){
+            mClinicTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background_clicked));
+        }else if (clinic == 0){
+            mClinicTextView.setBackground(SettingsActivity.this.getResources().getDrawable(R.drawable.curved_button_background));
+        }
+
+
+    }
+
+    private void setVenueClickListener(){
+        mOnlineTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (online == 0){
+                    online = 1;
+                }else if (online == 1){
+                    online = 0;
+                }
+
+                updateVenueColor();
+            }
+        });
+
+        mHomeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (home == 0){
+                    home = 1;
+                }else if (home == 1){
+                    home = 0;
+                }
+                updateVenueColor();
+            }
+        });
+
+        mOfficeTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (office == 0){
+                    office = 1;
+                }else if (office == 1){
+                    office = 0;
+                }
+
+                updateVenueColor();
+            }
+        });
+
+        mClinicTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (clinic == 0){
+                    clinic = 1;
+                }else if (clinic == 1){
+                    clinic = 0;
+                }
+
+                updateVenueColor();
+            }
+        });
+
+    }
+
+
+
+
 
     @Override
     public void onResume() {
@@ -207,7 +512,6 @@ public class SettingsActivity extends AppCompatActivity {
             mWaitingDialog.show();
             DoctorProfile doctorProfile = new DoctorProfile();
             if (TextUtils.isEmpty(mNameMaterialEditText.getText().toString()) || TextUtils.isEmpty(mPhoneNumberMaterialEditText.getText().toString())
-                    || TextUtils.isEmpty(mLowestMaterialEditText.getText().toString()) || TextUtils.isEmpty(mHighestMaterialEditText.getText().toString())
                     || TextUtils.isEmpty(mSpecialMaterialEditText.getText().toString()))
             {
                 if (TextUtils.isEmpty(mNameMaterialEditText.getText().toString()))
@@ -220,35 +524,28 @@ public class SettingsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Enter your updated phone number!", Toast.LENGTH_SHORT).show();
                 }
 
-                if (TextUtils.isEmpty(mLowestMaterialEditText.getText().toString()))
-                {
-                    Toast.makeText(this, "Enter your updated lowest charge!", Toast.LENGTH_SHORT).show();
-                }
-
-                if (TextUtils.isEmpty(mHighestMaterialEditText.getText().toString()))
-                {
-                    Toast.makeText(this, "Enter your updated highest charge!", Toast.LENGTH_SHORT).show();
-                }
 
                 if (TextUtils.isEmpty(mSpecialMaterialEditText.getText().toString()))
                 {
-                    Toast.makeText(this, "Enter your updated special charge!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Enter your Consultation Fee!", Toast.LENGTH_SHORT).show();
                 }
+
+                return false;
+            }
+
+            if (sunday == 0 & monday == 0 & tuesday == 0 & wednesday == 0 & thursday == 0 & friday == 0 & saturday == 0 ){
+                Toast.makeText(this, "You have to pick at least a day", Toast.LENGTH_SHORT).show();
 
                 return false;
             }
 
             mDoctorName = mNameMaterialEditText.getText().toString();
             mPhoneNumber = mPhoneNumberMaterialEditText.getText().toString();
-            mLowest = mLowestMaterialEditText.getText().toString();
-            mHighest = mHighestMaterialEditText.getText().toString();
             mSpecial = mSpecialMaterialEditText.getText().toString();
 
             doctorProfile.setName(mDoctorName);
             doctorProfile.setDoctorPhoneNumber(mPhoneNumber);
-            doctorProfile.setLowestCost(mLowest);
-            doctorProfile.setHighestCost(mHighest);
-            doctorProfile.setSpecialCost(mSpecial);
+            doctorProfile.setConsultationFee(mSpecial);
             doctorProfile.setPictureUrl(mPictureUrl);
             doctorProfile.setPassword(mPassword);
             doctorProfile.setSpeciality(mSpeciality);
@@ -256,6 +553,24 @@ public class SettingsActivity extends AppCompatActivity {
             doctorProfile.setCity(mCity);
             doctorProfile.setCountry(mCountry);
             doctorProfile.setEmail(mEmail);
+            doctorProfile.setSunday(sunday);
+            doctorProfile.setMonday(monday);
+            doctorProfile.setTuesday(tuesday);
+            doctorProfile.setWednesday(wednesday);
+            doctorProfile.setThursday(thursday);
+            doctorProfile.setFirday(friday);
+            doctorProfile.setSaturday(saturday);
+            doctorProfile.setStartHour(startHour);
+            doctorProfile.setStartMinute(startMinute);
+            doctorProfile.setEndHour(endHour);
+            doctorProfile.setEndMinute(endMinute);
+            doctorProfile.setOnlineConsult(online);
+            doctorProfile.setHomeVisit(home);
+            doctorProfile.setOfficeVisit(office);
+            doctorProfile.setClinic(clinic);
+
+
+            mAllProfileReference.setValue(doctorProfile);
 
             mProfileDatabaseReference.push().setValue(doctorProfile).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
