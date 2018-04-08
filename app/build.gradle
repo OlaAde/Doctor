@@ -21,8 +21,8 @@ android {
         applicationId "com.works.adeogo.doctor"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 7
-        versionName "2.5"
+        versionCode 13
+        versionName "3.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -74,10 +74,15 @@ dependencies {
     implementation 'net.rimoto:intlphoneinput:1.0.1'
     implementation 'com.github.philliphsu:numberpadtimepicker:1.1.1'
     implementation 'id.zelory:compressor:2.1.0'
-    compile 'com.github.arimorty:floatingsearchview:2.1.1'
+    implementation 'com.github.arimorty:floatingsearchview:2.1.1'
 
+    implementation 'com.github.GrenderG:Toasty:1.2.8'
+    implementation 'com.synnapps:carouselview:0.1.4'
+    implementation 'com.github.shalskar:PeekAndPop:1.1.0'
 
     implementation 'com.android.support:support-vector-drawable:26.1.0'
+    implementation 'com.github.stfalcon:chatkit:0.2.2'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

@@ -1,30 +1,22 @@
 package com.works.adeogo.doctor;
 
-import android.app.TimePickerDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,17 +26,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.philliphsu.numberpadtimepicker.NumberPadTimePicker;
-import com.philliphsu.numberpadtimepicker.NumberPadTimePickerDialog;
 import com.rengwuxian.materialedittext.MaterialEditText;
-import com.works.adeogo.doctor.model.DoctorProfile;
 
 import dmax.dialog.SpotsDialog;
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -78,6 +62,37 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate( R.layout.ask_doc, null);
+//        lay
+//        layout.setMinimumWidth((int)(displayRectangle.width() * 0.9f));
+//        layout.setMinimumHeight((int)(displayRectangle.height() * 0.9f));
+
+        alertDialog.setView(layout);
+        alertDialog.setCancelable(false);
+
+       final AlertDialog dialog = alertDialog.setPositiveButton(getResources().getString(R.string.ask_status_yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        }).setNeutralButton(getResources().getString(R.string.ask_status_no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                goPlay();
+            }
+        }).create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+                dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(getResources().getColor(R.color.blueLogin));
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.blueLogin));
+            }
+        });
+        dialog.show();
+
         edtEmail = findViewById(R.id.edtEmail);
         edtPassword = findViewById(R.id.edtPassword);
         mForgotPsd = findViewById(R.id.txt_view_pwd);
@@ -95,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, ActivityRegister.class);
+                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
                 startActivity(intent);
             }
         });
@@ -179,10 +194,12 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+
     private void goPlay()
     {
-        Uri uri = Uri.parse("https://play.google.com/store/apps/details?id=com.upload.adeogo.dokita" );
-        Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+        Uri uri = Uri.parse("market://details?id=com.upload.adeogo.dokita" );
+        Intent goToMarket = new Intent(Intent.ACTION_VIEW);
+        goToMarket.setData(uri);
         // To count with Play market backstack, After pressing back button,
         // to taken back to our application, we need to add following flags to intent.
         goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
@@ -195,9 +212,6 @@ public class LoginActivity extends AppCompatActivity {
                     Uri.parse("https://play.google.com/store/apps/details?id=com.upload.adeogo.dokita")));
         }
     }
-
-
-
 
     private void showLoginDialog() {
 

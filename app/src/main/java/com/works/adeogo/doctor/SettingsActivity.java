@@ -134,7 +134,7 @@ public class SettingsActivity extends AppCompatActivity {
                 } else {
                     // User is signed out
                     onSignedOutCleanup();
-                    Intent intent = new Intent(SettingsActivity.this, ActivityRegister.class);
+                    Intent intent = new Intent(SettingsActivity.this, RegistrationActivity.class);
                     startActivity(intent);
                 }
             }

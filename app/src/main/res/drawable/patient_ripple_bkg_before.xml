@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:color="@color/colorWhite"
+    tools:targetApi="lollipop">
+
+    <item>
+        <bitmap android:src="@drawable/patient_label_bkg"></bitmap>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <stroke android:color="@android:color/white" android:dashWidth="5dp"></stroke>
+        </shape>
+    </item>
+</ripple>

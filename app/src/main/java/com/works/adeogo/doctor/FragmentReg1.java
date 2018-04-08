@@ -33,12 +33,12 @@ import java.util.regex.Pattern;
  * Created by Adeogo on 11/20/2017.
  */
 
-public class FragmentReg1 extends Fragment implements BlockingStep {
+public class FragmentReg1 extends Fragment  {
 
     private MaterialEditText mEmailEDT, mPasswordEDT, mRePassword, mNameEDT;
     private IntlPhoneInput mIntlPhoneInput;
     private LinearLayout mLayout;
-    private SendMessage SM;
+//    private SendMessage SM;
     private String phoneNumber;
     private String mPasswordEntered;
     private boolean mConfirmed = false;
@@ -162,63 +162,63 @@ public class FragmentReg1 extends Fragment implements BlockingStep {
 
         if (!mIntlPhoneInput.isValid()){
             Toast.makeText(getActivity(), "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
+            return false;
         }
 
 
         return true;
     }
 
-    @Override
-    public VerificationError verifyStep() {
-        //return null if the user can go to the next step, create a new VerificationError instance otherwise
-        return null;
-    }
-
-    @Override
-    public void onSelected() {
-        //update UI when selected
-    }
 
 
+    public List<String> getData(){
 
-    @Override
-    public void onError(@NonNull VerificationError error) {
-        //handle error inside of the fragment, e.g. show error on EditText
-    }
+        String mEmail, mPassword, mName, mPhone;
 
-    interface SendMessage {
-        void sendData(String email, String password, String name, String phone);
-    }
+        if (!checkData()){
+            return null;
+        }else {
+            mEmail = mEmailEDT.getText().toString().trim();
+            mPassword = mPasswordEDT.getText().toString().trim();
+            mName = mNameEDT.getText().toString().trim();
+            mPhone = phoneNumber;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+            List result = new ArrayList<String>();
 
-        try {
-            SM = (SendMessage) getActivity();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Error in retrieving data. Please try again");
+            result.add(mEmail);
+            result.add(mPassword);
+            result.add(mName);
+            result.add(mPhone);
+
+            return result;
         }
     }
 
-    @Override
-    public void onNextClicked(final StepperLayout.OnNextClickedCallback callback) {
-        if (!checkData())
-            return;
-        SM.sendData(mEmailEDT.getText().toString().trim(), mPasswordEDT.getText().toString().trim(), mNameEDT.getText().toString().trim(),
-                phoneNumber);
-        callback.goToNextStep();
-    }
+//    interface SendMessage {
+//        void sendData(String email, String password, String name, String phone);
+//    }
 
-    @Override
-    public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//
+////        try {
+////            SM = (SendMessage) getActivity();
+////        } catch (ClassCastException e) {
+////            throw new ClassCastException("Error in retrieving data. Please try again");
+////        }
+//
+//    }
+//
+//    @Override
+//    public void onNextClicked(final StepperLayout.OnNextClickedCallback callback) {
+//        if (!checkData())
+//            return;
+//        SM.sendData(St);
+//        callback.goToNextStep();
+//    }
 
-    }
 
-    @Override
-    public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
-
-    }
 
     public static boolean isEmailValid(String email) {
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";

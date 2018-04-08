@@ -1,31 +1,113 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:animateLayoutChanges="true"
 
-    android:layout_margin="10dp"
     tools:context="com.works.adeogo.doctor.MessagesFragment">
 
-    <TextView
-        android:id="@+id/tvNoResultMessages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        android:text="No Messages Yet!"/>
+    <LinearLayout
+        android:animateLayoutChanges="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_marginTop="25dp"
+            android:gravity="center"
+            android:id="@+id/tvNoResultMessages"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:textSize="15sp"
+            android:text="No Messages Yet!"/>
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
 
-   <android.support.v7.widget.RecyclerView
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:id="@+id/messages_recycler_view">
+        <RelativeLayout
+            android:layout_marginTop="5dp"
+            android:background="@drawable/patient_ripple_bkg_before"
+            android:paddingTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:visibility="gone"
+            android:id="@+id/patientsLabelRL"
+            android:layout_width="match_parent"
+            android:layout_height="45dp">
 
-   </android.support.v7.widget.RecyclerView>
+            <TextView
+                android:layout_centerInParent="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:paddingLeft="5dp"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/clientMessagesLabel"
+                android:text="PATIENTS" />
 
-</FrameLayout>
+            <ImageView
+                android:id="@+id/droppishPatientsImageView"
+                android:layout_marginRight="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_arrow_drop_up_black_24dp"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/patients_recycler_view"
+            android:layout_marginBottom="5dp">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <RelativeLayout
+            android:background="@drawable/ripple_bkg_before"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:visibility="gone"
+            android:id="@+id/doctorsLabelRL"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:layout_centerInParent="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:paddingLeft="5dp"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/doctorsMessagesLabel"
+                android:text="DOCTORS"/>
+
+
+            <ImageView
+                android:layout_centerVertical="true"
+                android:id="@+id/droppishDoctorsImageView"
+                android:layout_marginRight="15dp"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_arrow_drop_up_black_24dp"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/doctors_recycler_view">
+
+        </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+</ScrollView>

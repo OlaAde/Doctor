@@ -16,8 +16,10 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.works.adeogo.doctor.QuestionActivity;
 import com.works.adeogo.doctor.R;
+import com.works.adeogo.doctor.TestChatActivity;
 import com.works.adeogo.doctor.model.ChatHead;
 import com.works.adeogo.doctor.model.DoctorProfile;
+import com.works.adeogo.doctor.model.Status;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,20 +40,17 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private final SearchAdapterOnclickHandler mClickHandler;
 
-
-
-
-    public interface SearchAdapterOnclickHandler{
+    public interface SearchAdapterOnclickHandler {
         void voidMethod(List<DoctorProfile> list, int adapterPosition);
     }
 
-    public SearchAdapter(Context context, SearchAdapterOnclickHandler searchAdapterOnclickHandler){
+    public SearchAdapter(Context context, SearchAdapterOnclickHandler searchAdapterOnclickHandler) {
         mContext = context;
         mClickHandler = searchAdapterOnclickHandler;
     }
 
 
-    public class SearchAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class SearchAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView mNameTextView, mSpecialityTextView, mAboutTextView, mMessage;
         public final ImageView mImageView;
 
@@ -62,7 +61,6 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             mSpecialityTextView = (TextView) itemView.findViewById(R.id.doctorSpeciality);
             mAboutTextView = (TextView) itemView.findViewById(R.id.aboutDoctor);
             mImageView = (ImageView) itemView.findViewById(R.id.profileImage);
-
             itemView.setOnClickListener(this);
         }
 
@@ -77,46 +75,60 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view  = layoutInflater.inflate(R.layout.item_search, parent, false);
+        View view = layoutInflater.inflate(R.layout.item_search, parent, false);
         return new SearchAdapterViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         String Name = null, Speciality = null, About = null, PictureUrl = null;
+        Status status = null;
         long unixTime = 0;
 
-        if(mFilteredList != null){
+        if (mFilteredList != null) {
 
             final DoctorProfile doctorProfile = mFilteredList.get(position);
             Name = doctorProfile.getName();
             Speciality = doctorProfile.getSpeciality();
             About = doctorProfile.getAbout();
             PictureUrl = doctorProfile.getPictureUrl();
-
-
-            if (PictureUrl!= null){
-                Picasso.with(mContext)
-                        .load(PictureUrl)
-                        .into(((SearchAdapterViewHolder) holder).mImageView);
-            }
+            status = doctorProfile.getStatus();
 
 
             ((SearchAdapterViewHolder) holder).mSpecialityTextView.setText(Speciality);
-            ((SearchAdapterViewHolder) holder).mAboutTextView.setText(About);
+
             ((SearchAdapterViewHolder) holder).mNameTextView.setText(Name);
 
             ((SearchAdapterViewHolder) holder).mMessage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(mContext, QuestionActivity.class);
+                    Intent intent = new Intent(mContext, TestChatActivity.class);
+
                     intent.putExtra("client_id", doctorProfile.getDoctorId());
                     intent.putExtra("client_name", doctorProfile.getName());
                     intent.putExtra("client_picture", doctorProfile.getPictureUrl());
                     intent.putExtra("collaborate", true);
+                    intent.putExtra("which", 1);
                     mContext.startActivity(intent);
                 }
             });
+
+            if (status == null) {
+                ((SearchAdapterViewHolder) holder).mAboutTextView.setText(About);
+                if (PictureUrl != null) {
+                    Picasso.with(mContext)
+                            .load(PictureUrl)
+                            .into(((SearchAdapterViewHolder) holder).mImageView);
+                }
+            } else {
+                String statusText = status.getText();
+                String imageUrl = status.getImageUrl();
+
+                ((SearchAdapterViewHolder) holder).mAboutTextView.setText(statusText);
+                Picasso.with(mContext)
+                        .load(imageUrl)
+                        .into(((SearchAdapterViewHolder) holder).mImageView);
+            }
         }
     }
 
@@ -138,10 +150,8 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                             filteredList.add(row);
                         }
                     }
-
                     mFilteredList = filteredList;
                 }
-
                 FilterResults filterResults = new FilterResults();
                 filterResults.values = mFilteredList;
                 return filterResults;
@@ -157,7 +167,7 @@ public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        if(null == mFilteredList){
+        if (null == mFilteredList) {
             return 0;
         }
         return mFilteredList.size();

@@ -16,30 +16,13 @@ public class DoctorProfile implements SearchSuggestion {
 
 
     private String DoctorId, Name, DoctorPhoneNumber, PictureUrl, Email, Password, Country, City, Speciality, ConsultationFee, About;
-    private int sunday;
-    private int monday;
-    private int tuesday;
-    private int wednesday;
-    private int thursday;
-    private int firday;
-    private int saturday;
-    private int startHour;
-    private int startMinute;
-    private int endHour;
-    private int endMinute;
-    private int onlineConsult;
-    private int homeVisit;
-    private int officeVisit;
-    private int clinic;
-
-
-
-    private int sex;
+    private Status Status;
+    private int sunday, monday, tuesday, wednesday, thursday, firday, saturday, startHour, startMinute, endHour, endMinute, onlineConsult, homeVisit, officeVisit, clinic, sex;
 
     public DoctorProfile() {
     }
 
-    public DoctorProfile(String doctorId, String name, String doctorPhoneNumber, String pictureUrl, String email, String password, String country, String city, String speciality, String consultationFee, String about, int sunday, int monday, int tuesday, int wednesday, int thursday, int firday, int saturday, int startHour, int startMinute, int endHour, int endMinute, int onlineConsult, int homeVisit, int officeVisit, int clinic, int sex) {
+    public DoctorProfile(String doctorId, String name, String doctorPhoneNumber, String pictureUrl, String email, String password, String country, String city, String speciality, String consultationFee, String about, Status status, int sunday, int monday, int tuesday, int wednesday, int thursday, int firday, int saturday, int startHour, int startMinute, int endHour, int endMinute, int onlineConsult, int homeVisit, int officeVisit, int clinic, int sex) {
         DoctorId = doctorId;
         Name = name;
         DoctorPhoneNumber = doctorPhoneNumber;
@@ -51,6 +34,7 @@ public class DoctorProfile implements SearchSuggestion {
         Speciality = speciality;
         ConsultationFee = consultationFee;
         About = about;
+        Status = status;
         this.sunday = sunday;
         this.monday = monday;
         this.tuesday = tuesday;
@@ -68,6 +52,15 @@ public class DoctorProfile implements SearchSuggestion {
         this.clinic = clinic;
         this.sex = sex;
     }
+
+    public Status getStatus() {
+        return Status;
+    }
+
+    public void setStatus(Status status) {
+        Status = status;
+    }
+
     public int getSex() {
         return sex;
     }

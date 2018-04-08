@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:background="@drawable/background_first"
+    tools:context="com.works.adeogo.doctor.RegistrationActivity">
+
+
+    <FrameLayout
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/fragment_container"
+        android:layout_marginBottom="60dp">
+
+    </FrameLayout>
+
+
+    <RelativeLayout
+        android:layout_marginTop="15dp"
+        android:id="@+id/strip"
+        android:padding="5dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <ImageView
+            android:visibility="invisible"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/backImageView"
+            android:src="@drawable/ic_arrow_back_black_24dp"
+            android:layout_centerVertical="true"/>
+
+
+        <com.gigamole.navigationtabstrip.NavigationTabStrip
+            android:layout_centerInParent="true"
+            android:layout_toRightOf="@+id/backImageView"
+            android:layout_toLeftOf="@+id/forwardImageView"
+            android:id="@+id/nav_view"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+
+            app:nts_color="#000"
+            app:nts_size="15sp"
+            app:nts_weight="3dp"
+            app:nts_factor="2.5"
+            android:clickable="false"
+            app:nts_titles="@array/titles"
+            app:nts_type="line"
+            app:nts_gravity="top"
+            app:nts_typeface="fonts/typeface.otf"
+            app:nts_corners_radius="1.5dp"
+            app:nts_animation_duration="300"
+            app:nts_active_color="#000"
+            app:nts_inactive_color="#c4c4c4"
+            android:listSelector="@android:color/transparent"/>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/forwardImageView"
+            app:srcCompat="@drawable/ic_arrow_forward_black_24dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"/>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

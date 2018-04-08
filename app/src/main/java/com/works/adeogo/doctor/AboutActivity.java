@@ -93,7 +93,7 @@ public class AboutActivity extends AppCompatActivity {
                 mAbout = mMaterialEditText.getText().toString();
 
                 DoctorProfile doctorProfile = new DoctorProfile(mDoctorId, mDoctorName, mPhoneNumber, mPictureUrl, mEmail, mPassword, mCountry, mCity,
-                        mSpeciality, mConsultationFee, mAbout, sunday, monday, tuesday, wednesday, thursday, friday, saturday, startHour, startMinute, endHour, endMinute,
+                        mSpeciality, mConsultationFee, mAbout, null, sunday, monday, tuesday, wednesday, thursday, friday, saturday, startHour, startMinute, endHour, endMinute,
                         online, home, office, clinic,sex );
 
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp">
+
+
+    <View
+        android:layout_below="@id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#41767676" />
+
+
+    <ImageView
+        android:layout_marginBottom="5dp"
+        android:id="@+id/imageView"
+        android:layout_width="119dp"
+        android:layout_height="117dp"
+        android:scaleType="centerCrop"
+        tools:srcCompat="@drawable/background_first" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="117dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_toRightOf="@id/imageView">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:textStyle="bold"
+            tools:text="Many non-antibiotic drugs can alter gut bacteria" />
+
+        <TextView
+            android:textSize="12sp"
+            android:id="@+id/desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:gravity="left"
+            android:maxLines="3"
+            android:ellipsize="end"
+            tools:text="A new study reveals that many marketed non-antibiotic drugs affect the growth of bacteria in the human gut and may contribute to antibiotic resistance." />
+    </RelativeLayout>
+</RelativeLayout>

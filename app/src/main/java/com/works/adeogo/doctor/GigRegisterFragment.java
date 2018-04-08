@@ -41,13 +41,16 @@ import com.stepstone.stepper.StepperLayout;
 import com.stepstone.stepper.VerificationError;
 import com.works.adeogo.doctor.model.DoctorProfile;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import dmax.dialog.SpotsDialog;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GigRegisterFragment extends Fragment implements BlockingStep {
+public class  GigRegisterFragment extends Fragment{
 
 
     private FirebaseAuth mFirebaseAuth;
@@ -148,16 +151,16 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
         return rootView;
     }
 
-    @Nullable
-    @Override
-    public VerificationError verifyStep() {
-        return null;
-    }
-
-    @Override
-    public void onSelected() {
-
-    }
+//    @Nullable
+//    @Override
+//    public VerificationError verifyStep() {
+//        return null;
+//    }
+//
+//    @Override
+//    public void onSelected() {
+//
+//    }
 
     @SuppressLint("NewApi")
     private void updateDateColor(){
@@ -302,7 +305,6 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
         });
     }
 
-
     @SuppressLint("NewApi")
     private void updateVenueColor(){
 
@@ -407,11 +409,11 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
             mEndTimeTextView.setText(endHour+":"+endMinute);
         }
     };
-
-    @Override
-    public void onError(@NonNull VerificationError error) {
-
-    }
+//
+//    @Override
+//    public void onError(@NonNull VerificationError error) {
+//
+//    }
 
     protected void displayReceivedData1(String email, String password, String name, String phone, String photoUrl, String country, String speciality, String city, Context context )
     {
@@ -426,156 +428,43 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
         mCity = city;
     }
 
-    private void lastNext() {
-        final android.app.AlertDialog waitingDialog = new SpotsDialog(getActivity());
-        waitingDialog.show();
 
-        //Register new user
-        mFirebaseAuth.createUserWithEmailAndPassword(mEmail, mPassword)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
+    public List<Integer> getData(){
 
-                        mFirebaseAuth.signInWithEmailAndPassword(mEmail, mPassword)
-                                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                                    @Override
-                                    public void onSuccess(AuthResult authResult) {
+        if (!check()){
+            return null;
+        }else {
 
-                                        FirebaseUser user = mFirebaseAuth.getCurrentUser();
-                                        if(user!=null) {
-                                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                                    .setDisplayName(mName).build();
-                                            user.updateProfile(profileUpdates);
-                                        }
+            List result = new ArrayList<String>();
 
-                                        waitingDialog.dismiss();
-                                        Intent intent = new Intent(mContext, FirstActivity.class);
-                                        startActivity(intent);
-                                        activity.finish();
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                waitingDialog.dismiss();
-                                Toast.makeText(activity, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            result.add(sunday);
+            result.add(monday);
+            result.add(tuesday);
+            result.add(wednesday);
+            result.add(thursday);
+            result.add(friday);
+            result.add(saturday);
 
-                            }
-                        });
+            result.add(online);
+            result.add(home);
+            result.add(office);
+            result.add(clinic);
 
-                        String userId = mFirebaseAuth.getCurrentUser().getUid();
+            result.add(startHour);
+            result.add(startMinute);
+            result.add(endHour);
+            result.add(endMinute);
 
-                        DoctorProfile doctorProfile = new DoctorProfile();
-                        doctorProfile.setDoctorId(userId);
-                        doctorProfile.setEmail(mEmail);
-                        doctorProfile.setPassword(mPassword);
-                        doctorProfile.setName(mName);
-                        doctorProfile.setDoctorPhoneNumber(mPhone);
-                        doctorProfile.setCountry(mCountry);
-                        doctorProfile.setSpeciality(mSpeciality);
-                        doctorProfile.setCity(mCity);
-                        doctorProfile.setPictureUrl(mPhotoUrl);
-                        doctorProfile.setConsultationFee(mSpecial);
-                        doctorProfile.setSunday(sunday);
-                        doctorProfile.setMonday(monday);
-                        doctorProfile.setTuesday(tuesday);
-                        doctorProfile.setWednesday(wednesday);
-                        doctorProfile.setThursday(thursday);
-                        doctorProfile.setFirday(friday);
-                        doctorProfile.setSaturday(saturday);
-                        doctorProfile.setStartHour(startHour);
-                        doctorProfile.setStartMinute(startMinute);
-                        doctorProfile.setEndHour(endHour);
-                        doctorProfile.setEndMinute(endMinute);
-                        doctorProfile.setOnlineConsult(online);
-                        doctorProfile.setHomeVisit(home);
-                        doctorProfile.setOfficeVisit(office);
-                        doctorProfile.setClinic(clinic);
-                        doctorProfile.setSex(sex);
+            return result;
 
-                        mDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/"  +userId + "/profile/profile");
-                        mAllDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" + "all_profiles/" + userId );
-
-
-                        FirebaseMessaging.getInstance().subscribeToTopic(userId);
-
-                        mDatabaseReference.push().setValue(doctorProfile)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Toast.makeText(mContext, "Registered successfully !!!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(mContext, FirstActivity.class);
-                                        if (mContext != null){
-                                            activity.startActivity(intent);
-                                            activity.finish();
-
-
-                                        }else {
-                                            Intent intent1 = new Intent(mContext, FirstActivity.class);
-                                            activity.startActivity(intent1);
-                                            activity.finish();
-
-                                        }
-
-                                        waitingDialog.dismiss();
-                                        activity.finish();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        waitingDialog.dismiss();
-                                        Toast.makeText(activity, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                        mAllDatabaseReference.setValue(doctorProfile)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-
-                                        Toast.makeText(mContext, "Registered successfully !!!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(mContext, FirstActivity.class);
-                                        activity.startActivity(intent);
-                                        activity.finish();
-                                        waitingDialog.dismiss();
-                                        activity.finish();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        waitingDialog.dismiss();
-                                        Toast.makeText(activity, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(activity, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-
-    @Override
-    public void onNextClicked(final StepperLayout.OnNextClickedCallback callback) {
-
-    }
-
-    @Override
-    public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
-        if (!check())
-            return;
-        lastNext();
-
+        }
     }
 
 
     private boolean check() {
 
         if (TextUtils.isEmpty(mConsultationFeeEditText.getText().toString())){
-//
+
             Toast.makeText(getActivity(), "Please enter your consultation fee", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -595,11 +484,6 @@ public class GigRegisterFragment extends Fragment implements BlockingStep {
         mSpecial = mConsultationFeeEditText.getText().toString();
 
         return true;
-    }
-
-    @Override
-    public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
-        callback.goToPrevStep();
     }
 
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/adv_bkg"
+    android:layout_marginLeft="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true">
+
+    <com.joooonho.SelectableRoundedImageView
+        android:id="@+id/image"
+        app:sriv_right_top_corner_radius="10dp"
+        app:sriv_left_top_corner_radius="10dp"
+        app:sriv_right_bottom_corner_radius="10dp"
+        app:sriv_left_bottom_corner_radius="10dp"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/image_1"/>
+
+    <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_alignBottom="@id/image"
+        android:layout_margin="10dp"
+        android:layout_width="255dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/curved_button_background_adv"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_above="@id/some_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="YOUR ADVERT HERE"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:layout_above="@id/some_more_info"
+            android:id="@+id/some_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Some information"/>
+
+        <TextView
+            android:id="@+id/some_more_info"
+            android:layout_above="@id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Some more information"
+            android:layout_marginBottom="5dp"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_above="@id/visit_btn"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ad0d0d0d"/>
+
+        <TextView
+            android:textColor="#faca1c"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/visit_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Link to Your Website"
+            android:textStyle="bold"
+            android:gravity="left"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

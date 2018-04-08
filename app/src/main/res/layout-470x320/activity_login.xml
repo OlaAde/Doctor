@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/doctors_login_bkg_img"
+    android:background="@drawable/background_first"
     android:id="@+id/rootLayout"
     tools:context=".LoginActivity">
 
@@ -159,7 +159,7 @@
     <TextView
         android:fontFamily="@font/shree"
         android:layout_marginTop="15dp"
-        android:textSize="15sp"
+        android:textSize="20sp"
         android:layout_marginLeft="@dimen/login_margin"
         android:layout_marginRight="@dimen/login_margin"
         android:layout_height="50dp"

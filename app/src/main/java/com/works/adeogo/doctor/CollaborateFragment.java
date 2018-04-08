@@ -75,7 +75,7 @@ public class CollaborateFragment extends Fragment implements SearchAdapter.Searc
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mDatabaseReference = FirebaseDatabase.getInstance().getReference("new_doctors").child("all_profiles");
-        setFakeData();
+        setData();
 
         // Associate searchable configuration with the SearchView
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
@@ -83,6 +83,8 @@ public class CollaborateFragment extends Fragment implements SearchAdapter.Searc
         mSearchView.setSearchableInfo(searchManager
                 .getSearchableInfo(getActivity().getComponentName()));
         mSearchView.setMaxWidth(Integer.MAX_VALUE);
+        mSearchView.setIconified(false);
+        mSearchView.clearFocus();
 
         // listening to search query text change
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -177,7 +179,7 @@ public class CollaborateFragment extends Fragment implements SearchAdapter.Searc
 
     }
 
-    private void setFakeData() {
+    private void setData() {
         mChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

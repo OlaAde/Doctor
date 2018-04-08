@@ -3,25 +3,23 @@ package com.works.adeogo.doctor;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,11 +37,10 @@ import com.works.adeogo.doctor.adapters.QuestionAdapter;
 import com.works.adeogo.doctor.model.ChatHead;
 import com.works.adeogo.doctor.model.Notification;
 import com.works.adeogo.doctor.model.Question;
-import com.works.adeogo.doctor.utils.FirebaseUtils;
+import com.works.adeogo.doctor.utils.Constants;
 import com.works.adeogo.doctor.utils.NetworkUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
@@ -57,16 +54,15 @@ public class QuestionActivity extends AppCompatActivity {
     //    private List<Question> mQuestionList ;
     private ListView mQuestionListView;
 
-    private ImageView mLinkImageView;
+    private ImageView mLinkImageView, mSendImage;
     private EditText mQuestionEditText;
-    private Button mSendButton;
     private TextView mNoInternetTextView, mNoQuestionTextView;
     private LinearLayout mSendLinearLayout;
 
     private StorageReference mChatPhotosStorageReference;
     private FirebaseStorage mFirebaseStorage;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference, mClientDatabaseReference;
+    private DatabaseReference mClientDatabaseReference, mSelfDatabaseReference, mSelfChatHeadDatabaseReference, mClientChatHeadDatabaseReference, mPictureRef;
     private ChildEventListener mChildEventListener, mPhotoChildEventListener;
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -77,8 +73,6 @@ public class QuestionActivity extends AppCompatActivity {
     private String mUsername, mClientName, userId, mClientId, mClientPhotoUrl, mSelfPictureUrl;
     private int which;
     private boolean isFromCollaborate = false;
-    private DatabaseReference mSelfDatabaseReference, mSelfChatHeadDatabaseReference, mDoctorChatHeadDatabaseReference, mDoctorDatabaseReference, mPictureRef;
-
 
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -116,12 +110,13 @@ public class QuestionActivity extends AppCompatActivity {
         mQuestionListView = (ListView) findViewById(R.id.questionListView);
 
         mQuestionEditText = (EditText) findViewById(R.id.questionMessageEditText);
-        mSendButton = (Button) findViewById(R.id.questionSendButton);
+        mSendImage = (ImageView) findViewById(R.id.questionSendButton);
 
         List<Question> questions = new ArrayList<>();
 
         mAdapter = new QuestionAdapter(this, R.layout.item_question, questions);
         mQuestionListView.setAdapter(mAdapter);
+        mQuestionListView.setClickable(false);
 
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -130,32 +125,31 @@ public class QuestionActivity extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
+
                 if (user != null) {
                     // User is signed in
                     userId = user.getUid();
                     mUsername = user.getDisplayName();
 
-                    if (which == 0){
-                        mClientDatabaseReference = mFirebaseDatabase.getReference().child("users").child(mClientId).child("questions").child(userId);
-                    } else {
-                        mClientDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child(userId);
+                    if (which == 0) {
+                        mClientDatabaseReference = mFirebaseDatabase.getReference().child("users").child(mClientId).child("questions").child("doctors").child(userId);
+                        mClientChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("users").child(mClientId).child("questions").child("chat_head").child("doctors").child(userId);
+                        mChatPhotosStorageReference = mFirebaseStorage.getReference().child("clients").child("doctors").child("chat_photos");
+
+                        mSelfDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child("clients").child(mClientId);
+                        mSelfChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child("chat_head").child("clients").child(mClientId);
+
+                    } else if (which == 1) {
+                        mClientDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child("doctors").child(userId);
+                        mClientChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child("chat_head").child("doctors").child(userId);
+                        mChatPhotosStorageReference = mFirebaseStorage.getReference().child("doctors").child("doctors").child("chat_photos");
+
+                        mSelfDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child("doctors").child(mClientId);
+                        mSelfChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child("chat_head").child("doctors").child(mClientId);
+
                     }
 
-                    mDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" +userId + "/questions/" + mClientId);
-
-
-                    mSelfDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child(mClientId);
-
-                    mSelfChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(userId).child("questions").child("chat_head").child(mClientId);
-
-                    mDoctorChatHeadDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child("chat_head").child(userId);
-
-                    mDoctorDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors").child(mClientId).child("questions").child(userId);
-
-                    mPictureRef = mFirebaseDatabase.getReference().child("new_doctors").child(userId);
-
-
-                    mChatPhotosStorageReference = mFirebaseStorage.getReference().child("doctors").child("clients").child("chat_photos");
+                    mPictureRef = mFirebaseDatabase.getReference().child("new_doctors").child("all_profiles").child(userId);
 
 
                     onSignedInInitialize(user.getDisplayName());
@@ -176,14 +170,15 @@ public class QuestionActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.toString().trim().length() > 0) {
-                    mSendButton.setEnabled(true);
+                    mSendImage.setEnabled(true);
                 } else {
-                    mSendButton.setEnabled(false);
+                    mSendImage.setEnabled(false);
                 }
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+
             }
         });
 
@@ -192,50 +187,30 @@ public class QuestionActivity extends AppCompatActivity {
         mQuestionListView.smoothScrollToPosition(position);
 
         boolean isConnect = NetworkUtils.isOnline(this);
-        if (!isConnect){
+        if (!isConnect) {
             mNoInternetTextView.setVisibility(View.VISIBLE);
             noInternet();
         }
 
         // Send button sends a message and clears the EditText
-        mSendButton.setOnClickListener(new View.OnClickListener() {
+        mSendImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-
-                if (!TextUtils.isEmpty(mQuestionEditText.getText().toString())){
-                    if (isFromCollaborate){
+                if (!TextUtils.isEmpty(mQuestionEditText.getText().toString())) {
+                    if (isFromCollaborate || which == 1) {
                         Question question = new Question(mQuestionEditText.getText().toString().trim(), mUsername, 0, null);
                         mSelfDatabaseReference.push().setValue(question);
-
+                        mClientDatabaseReference.push().setValue(question);
 
                         long unixTimeStamp = NetworkUtils.getUnixTime();
-                        ChatHead selfChatHead = new ChatHead(mClientId, mClientName, mClientPhotoUrl, unixTimeStamp,    1);
+                        ChatHead selfChatHead = new ChatHead(mClientId, mClientName, mClientPhotoUrl, unixTimeStamp, 1);
                         mSelfChatHeadDatabaseReference.setValue(selfChatHead);
 
                         ChatHead doctorChatHead = new ChatHead(userId, mUsername, mSelfPictureUrl, unixTimeStamp, 1);
 
-                        mDoctorChatHeadDatabaseReference.setValue(doctorChatHead);
-                        mDoctorDatabaseReference.push().setValue(question);
 
-
-
-                        Notification notification = new Notification();
-                        notification.setText(mQuestionEditText.getText().toString().trim());
-                        notification.setTopic( mClientId);
-                        notification.setUid(userId);
-                        notification.setUsername(mUsername);
-                        notification.setType("0");
-
-                        FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
-
-                        FirebaseMessaging.getInstance().subscribeToTopic(userId);
-                        // Clear input box
-                        mQuestionEditText.setText("");
-                }else {
-                        Question question = new Question(mQuestionEditText.getText().toString().trim(), mUsername, 0, null);
-                        mDatabaseReference.push().setValue(question);
-                        mClientDatabaseReference.push().setValue(question);
+                        mClientChatHeadDatabaseReference.setValue(doctorChatHead);
 
                         Notification notification = new Notification();
                         notification.setText(mQuestionEditText.getText().toString().trim());
@@ -243,8 +218,49 @@ public class QuestionActivity extends AppCompatActivity {
                         notification.setUid(userId);
                         notification.setUsername(mUsername);
                         notification.setType("0");
+                        notification.setWhich(Integer.toString(which));
+                        if (mClientPhotoUrl != null) {
+                            notification.setImageUrl(mClientPhotoUrl);
+                        } else {
+                            mClientPhotoUrl = Constants.mPlaceHolder;
+                            notification.setImageUrl(mClientPhotoUrl);
+                        }
 
-                        FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
+
+                        FirebaseDatabase.getInstance().getReference("notifications").child(mClientId).push().setValue(notification);
+
+                        FirebaseMessaging.getInstance().subscribeToTopic(userId);
+
+                        // Clear input box
+                        mQuestionEditText.setText("");
+                    } else {
+                        Question question = new Question(mQuestionEditText.getText().toString().trim(), mUsername, 0, null);
+                        mSelfDatabaseReference.push().setValue(question);
+                        mClientDatabaseReference.push().setValue(question);
+
+                        long unixTimeStamp = NetworkUtils.getUnixTime();
+
+                        ChatHead selfChatHead = new ChatHead(mClientId, mClientName, mClientPhotoUrl, unixTimeStamp, 0);
+                        mSelfChatHeadDatabaseReference.setValue(selfChatHead);
+
+                        ChatHead clientChatHead = new ChatHead(userId, mUsername, mSelfPictureUrl, unixTimeStamp, 0);
+                        mClientChatHeadDatabaseReference.setValue(clientChatHead);
+
+
+                        Notification notification = new Notification();
+                        notification.setText(mQuestionEditText.getText().toString().trim());
+                        notification.setTopic(mClientId);
+                        notification.setUid(userId);
+                        notification.setUsername(mUsername);
+                        notification.setType("0");
+                        notification.setWhich(Integer.toString(which));
+                        if (mClientPhotoUrl != null) {
+                            notification.setImageUrl(mClientPhotoUrl);
+                        } else {
+                            mClientPhotoUrl = Constants.mPlaceHolder;
+                            notification.setImageUrl(mClientPhotoUrl);
+                        }
+                        FirebaseDatabase.getInstance().getReference("notifications").child(mClientId).push().setValue(notification);
 
                         FirebaseMessaging.getInstance().subscribeToTopic(userId);
                         FirebaseMessaging.getInstance().unsubscribeFromTopic(mClientId);
@@ -252,7 +268,7 @@ public class QuestionActivity extends AppCompatActivity {
                         mQuestionEditText.setText("");
                     }
 
-                }else {
+                } else {
                     Toast.makeText(QuestionActivity.this, "Enter a question", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -281,26 +297,31 @@ public class QuestionActivity extends AppCompatActivity {
     private void attachDatabaseReadListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
-
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     Question question = dataSnapshot.getValue(Question.class);
-                    if (TextUtils.equals(question.getName(), mUsername)){
+                    if (TextUtils.equals(question.getName(), mUsername)) {
                         question.setYou(0);
                         question.setName("You");
-                    }else {
+                    } else {
                         question.setYou(1);
                     }
                     mAdapter.add(question);
-
-
                 }
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-                public void onChildRemoved(DataSnapshot dataSnapshot) {}
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-                public void onCancelled(DatabaseError databaseError) {}
+
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
+
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onCancelled(DatabaseError databaseError) {
+                }
             };
-            mDatabaseReference.addChildEventListener(mChildEventListener);
+            mSelfDatabaseReference.addChildEventListener(mChildEventListener);
         }
 
         if (mPhotoChildEventListener == null) {
@@ -309,14 +330,22 @@ public class QuestionActivity extends AppCompatActivity {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     String key = dataSnapshot.getKey().toString();
-                    if (TextUtils.equals(key, "photoUrl")){
+                    if (TextUtils.equals(key, "pictureUrl")) {
                         mSelfPictureUrl = dataSnapshot.getValue().toString();
                     }
                 }
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-                public void onChildRemoved(DataSnapshot dataSnapshot) {}
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-                public void onCancelled(DatabaseError databaseError) {}
+
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
+
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onCancelled(DatabaseError databaseError) {
+                }
             };
             mPictureRef.addChildEventListener(mPhotoChildEventListener);
         }
@@ -324,11 +353,17 @@ public class QuestionActivity extends AppCompatActivity {
 
     private void detachDatabaseReadListener() {
         if (mChildEventListener != null) {
-            mDatabaseReference.removeEventListener(mChildEventListener);
+            mSelfDatabaseReference.removeEventListener(mChildEventListener);
             mChildEventListener = null;
         }
 
+        if (mPhotoChildEventListener != null) {
+            mPictureRef.removeEventListener(mPhotoChildEventListener);
+            mPhotoChildEventListener = null;
+        }
+
         mAdapter.clear();
+
     }
 
     @Override
@@ -343,9 +378,7 @@ public class QuestionActivity extends AppCompatActivity {
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
             }
-        }
-
-        else if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
+        } else if (requestCode == RC_PHOTO_PICKER && resultCode == RESULT_OK) {
             Uri selectedImageUri = data.getData();
 
             // Get a reference to store file at chat_photos/<FILENAME>
@@ -361,7 +394,30 @@ public class QuestionActivity extends AppCompatActivity {
 
 
                             Question question = new Question(null, mUsername, 0, downloadUrl.toString());
-                            mDatabaseReference.push().setValue(question);
+                            ChatHead selfChatHead;
+                            ChatHead clientChatHead;
+                            if (isFromCollaborate || which == 1) {
+
+                                long unixTimeStamp = NetworkUtils.getUnixTime();
+
+                                selfChatHead = new ChatHead(mClientId, mClientName, mClientPhotoUrl, unixTimeStamp, 1);
+
+                                clientChatHead = new ChatHead(userId, mUsername, mSelfPictureUrl, unixTimeStamp, 1);
+
+
+                            } else {
+
+                                long unixTimeStamp = NetworkUtils.getUnixTime();
+
+                                selfChatHead = new ChatHead(mClientId, mClientName, mClientPhotoUrl, unixTimeStamp, 0);
+
+                                clientChatHead = new ChatHead(userId, mUsername, mSelfPictureUrl, unixTimeStamp, 0);
+                            }
+
+                            mSelfChatHeadDatabaseReference.setValue(selfChatHead);
+                            mClientChatHeadDatabaseReference.setValue(clientChatHead);
+
+                            mSelfDatabaseReference.push().setValue(question);
                             mClientDatabaseReference.push().setValue(question);
 
                             Notification notification = new Notification();
@@ -370,8 +426,15 @@ public class QuestionActivity extends AppCompatActivity {
                             notification.setUid(userId);
                             notification.setUsername(mUsername);
                             notification.setType("0");
+                            notification.setWhich(Integer.toString(which));
+                            if (mClientPhotoUrl != null) {
+                                notification.setImageUrl(mClientPhotoUrl);
+                            } else {
+                                mClientPhotoUrl = Constants.mPlaceHolder;
+                                notification.setImageUrl(mClientPhotoUrl);
+                            }
 
-                            FirebaseDatabase.getInstance().getReference(mClientId).push().setValue(notification);
+                            FirebaseDatabase.getInstance().getReference("notifications").child(mClientId).push().setValue(notification);
 
                             FirebaseMessaging.getInstance().subscribeToTopic(userId);
                             FirebaseMessaging.getInstance().unsubscribeFromTopic(mClientId);
@@ -408,12 +471,9 @@ public class QuestionActivity extends AppCompatActivity {
         detachDatabaseReadListener();
     }
 
-
-    private void noInternet(){
+    private void noInternet() {
         mNoQuestionTextView.setVisibility(View.GONE);
         mNoInternetTextView.setVisibility(View.VISIBLE);
         mSendLinearLayout.setVisibility(View.GONE);
     }
-
-
 }

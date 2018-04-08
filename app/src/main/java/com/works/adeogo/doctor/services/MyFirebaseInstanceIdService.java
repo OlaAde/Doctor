@@ -29,15 +29,14 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         if (user!=null){
             userId = user.getUid();
 
-            FirebaseMessaging.getInstance().subscribeToTopic("Notifications/" + userId);
+            FirebaseMessaging.getInstance().subscribeToTopic(userId);
             Log.d(TAG, "Refreshed token: " + refreshedToken);
 
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Notifications/" );
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("notifications/" );
             // If you want to send messages to this application instance or
             // manage this apps subscriptions on the server side, send the
             // Instance ID token to your app server.
             reference.child("token").setValue(refreshedToken);
         }
-
     }
 }

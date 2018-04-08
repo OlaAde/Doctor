@@ -34,31 +34,31 @@ public class StepperAdapter extends AbstractFragmentStepAdapter {
 
     @Override
     public Step createStep(int position) {
-        switch (position){
-            case 0:
-                final FragmentReg1 step1 = new FragmentReg1();
-                Bundle b1 = new Bundle();
-                b1.putInt(CURRENT_STEP_POSITION_KEY, position);
-                step1.setArguments(b1);
-                strings.add(0, step1.getTag());
-                return step1;
-
-            case 1:
-                final ProfileRegistrationFragment step2 = new ProfileRegistrationFragment();
-                Bundle b2 = new Bundle();
-                b2.putInt(CURRENT_STEP_POSITION_KEY, position);
-                step2.setArguments(b2);
-                strings.add(1, step2.getTag());
-                return step2;
-
-            case 2:
-                final GigRegisterFragment step3 = new GigRegisterFragment();
-                Bundle b3 = new Bundle();
-                b3.putInt(CURRENT_STEP_POSITION_KEY, position);
-                step3.setArguments(b3);
-                strings.add(2, step3.getTag());
-                return step3;
-        }
+//        switch (position){
+//            case 0:
+//                final FragmentReg1 step1 = new FragmentReg1();
+//                Bundle b1 = new Bundle();
+//                b1.putInt(CURRENT_STEP_POSITION_KEY, position);
+//                step1.setArguments(b1);
+//                strings.add(0, step1.getTag());
+//                return step1;
+//
+//            case 1:
+//                final ProfileRegistrationFragment step2 = new ProfileRegistrationFragment();
+//                Bundle b2 = new Bundle();
+//                b2.putInt(CURRENT_STEP_POSITION_KEY, position);
+//                step2.setArguments(b2);
+//                strings.add(1, step2.getTag());
+//                return step2;
+//
+//            case 2:
+//                final GigRegisterFragment step3 = new GigRegisterFragment();
+//                Bundle b3 = new Bundle();
+//                b3.putInt(CURRENT_STEP_POSITION_KEY, position);
+//                step3.setArguments(b3);
+//                strings.add(2, step3.getTag());
+//                return step3;
+//        }
 
         return null;
     }

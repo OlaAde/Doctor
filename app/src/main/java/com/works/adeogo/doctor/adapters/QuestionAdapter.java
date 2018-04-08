@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.joooonho.SelectableRoundedImageView;
 import com.squareup.picasso.Picasso;
 import com.works.adeogo.doctor.R;
 import com.works.adeogo.doctor.model.Question;
@@ -34,11 +36,11 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
             convertView = ((Activity) getContext()).getLayoutInflater().inflate(R.layout.item_question, parent, false);
         }
 
-        CardView youCardView = convertView.findViewById(R.id.mYouMessage);
-        CardView notYouCardView = convertView.findViewById(R.id.mNotYouMessage);
+        RelativeLayout youCardView = convertView.findViewById(R.id.mYouMessage);
+        RelativeLayout notYouCardView = convertView.findViewById(R.id.mNotYouMessage);
 
-        ImageView photoImageViewNotYou = (ImageView) convertView.findViewById(R.id.photoNotYou);
-        ImageView photoImageViewYou = (ImageView) convertView.findViewById(R.id.photoYou);
+        SelectableRoundedImageView photoImageViewNotYou = (SelectableRoundedImageView) convertView.findViewById(R.id.photoNotYou);
+        SelectableRoundedImageView photoImageViewYou = (SelectableRoundedImageView) convertView.findViewById(R.id.photoYou);
 
         TextView youMessageTextView = (TextView) convertView.findViewById(R.id.youQuestionMessageTextView);
         TextView messageTextView = (TextView) convertView.findViewById(R.id.questionMessageTextView);
@@ -55,6 +57,7 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
             if (isPhoto){
                 youMessageTextView.setVisibility(View.GONE);
                 photoImageViewYou.setVisibility(View.VISIBLE);
+                notYouCardView.setPadding(0,0,0,0);
                 Picasso.with(mContext)
                         .load(question.getPhotoUrl())
                         .into(photoImageViewYou);
@@ -68,6 +71,7 @@ public class QuestionAdapter extends ArrayAdapter<Question> {
             notYouCardView.setVisibility(View.VISIBLE);
 
             if (isPhoto) {
+                youCardView.setPadding(0,0,0,0);
                 messageTextView.setVisibility(View.GONE);
                 photoImageViewNotYou.setVisibility(View.VISIBLE);
                 Picasso.with(mContext)

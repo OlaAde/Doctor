@@ -59,6 +59,7 @@ app:cardElevation="2dp">
                     android:id="@+id/itemDate"
                     android:layout_width="wrap_content"
                     android:textSize="15sp"
+                    android:visibility="gone"
                     android:text="Oladipo Ademi"
                     android:textStyle="normal"
                     android:textColor="@android:color/black"
@@ -88,3 +89,5 @@ app:cardElevation="2dp">
 </LinearLayout>
 
 </LinearLayout>
+
+

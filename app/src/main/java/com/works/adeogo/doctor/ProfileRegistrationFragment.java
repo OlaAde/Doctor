@@ -51,16 +51,16 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ProfileRegistrationFragment extends Fragment implements BlockingStep {
+public class ProfileRegistrationFragment extends Fragment{
 
     private String mEmail, mPassword, mPhone, mName, mPhotoUrl, mCountry, mSpeciality, mCity;
 
-    private int sex;
+    private int sex = -1;
     private RadioButton mMaleButton;
     private RadioButton mFemaleButton;
 
 
-    private SendMessage1 SM;
+//    private SendMessage1 SM;
 
     private static final int RC_PHOTO_PICKER = 12;
 
@@ -276,6 +276,13 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         }
     }
 
+    public void testerd(String mPhotoUrl){
+        if (mPhotoUrl!= null){
+            Picasso.with(getContext())
+                    .load(mPhotoUrl)
+                    .into(mResultImageV);
+        }
+    }
     public List<String> setProfileDetails(View v) {
         if (TextUtils.isEmpty(mPhotoUrl)) {
             Snackbar.make(v, "Please pick a picture", Snackbar.LENGTH_SHORT)
@@ -301,28 +308,18 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
             return null;
         }
 
+        if (sex == -1) {
+            Snackbar.make(v, "Please pick your sex", Snackbar.LENGTH_SHORT)
+                    .show();
+            return null;
+        }
+
         List<String> retString = new ArrayList<>();
         retString.add(mPhotoUrl);
         retString.add(mCountry);
         retString.add(mSpeciality);
         retString.add(mCity);
         return retString;
-    }
-
-    @Nullable
-    @Override
-    public VerificationError verifyStep() {
-        return null;
-    }
-
-    @Override
-    public void onSelected() {
-
-    }
-
-    @Override
-    public void onError(@NonNull VerificationError error) {
-
     }
 
     public void setCitySpinners(LinearLayout CityLinearLayout, Spinner spinner) {
@@ -347,7 +344,7 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         } else if (country_chooser_int == 4) {
             mCityAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.ghanian_cities, android.R.layout.simple_spinner_item);
-        } else if (country_chooser_int == 3) {
+        } else if (country_chooser_int == 5) {
             mCityAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.zambian_cities, android.R.layout.simple_spinner_item);
         }
@@ -356,13 +353,31 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
 
     }
 
-    @Override
-    public void onNextClicked(final StepperLayout.OnNextClickedCallback callback) {
-        if (!check())
-            return;
-        SM.sendData(mEmail, mPassword, mName, mPhone, mPhotoUrl, mCountry, mSpeciality, mCity);
-        callback.goToNextStep();
+    public List<String> getData(){
+        if (!check()){
+            return null;
+        }else {
+
+            List result = new ArrayList<String>();
+
+            result.add(mPhotoUrl);
+            result.add(mCountry);
+            result.add(mSpeciality);
+            result.add(mCity);
+            result.add(Integer.toString(sex));
+
+            return result;
+        }
     }
+
+
+//    @Override
+//    public void onNextClicked(final StepperLayout.OnNextClickedCallback callback) {
+//        if (!check())
+//            return;
+//        SM.sendData(mEmail, mPassword, mName, mPhone, mPhotoUrl, mCountry, mSpeciality, mCity);
+//        callback.goToNextStep();
+//    }
 
     protected void displayReceivedData(String email, String password, String name, String phone) {
         mEmail = email;
@@ -371,9 +386,9 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
         mPhone = phone;
     }
 
-    interface SendMessage1 {
-        void sendData(String email, String password, String name, String phone, String photoUrl, String country, String speciality, String city);
-    }
+//    interface SendMessage1 {
+//        void sendData(String email, String password, String name, String phone, String photoUrl, String country, String speciality, String city);
+//    }
 
     private boolean check() {
 
@@ -397,28 +412,33 @@ public class ProfileRegistrationFragment extends Fragment implements BlockingSte
             return false;
         }
 
+        if (sex == -1) {
+            Toast.makeText(getActivity(), "Please pick your sex ", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
         return true;
     }
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        try {
-            SM = (ProfileRegistrationFragment.SendMessage1) getActivity();
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Error in retrieving data. Please try again");
-        }
-    }
-
-    @Override
-    public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
-
-    }
-
-    @Override
-    public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
-        callback.goToPrevStep();
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//
+//        try {
+//            SM = (ProfileRegistrationFragment.SendMessage1) getActivity();
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException("Error in retrieving data. Please try again");
+//        }
+//    }
+//
+//    @Override
+//    public void onCompleteClicked(StepperLayout.OnCompleteClickedCallback callback) {
+//
+//    }
+//
+//    @Override
+//    public void onBackClicked(StepperLayout.OnBackClickedCallback callback) {
+//        callback.goToPrevStep();
+//    }
 }

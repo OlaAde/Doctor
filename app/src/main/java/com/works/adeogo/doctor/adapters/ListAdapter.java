@@ -16,6 +16,7 @@ import com.squareup.picasso.Picasso;
 import com.works.adeogo.doctor.R;
 import com.works.adeogo.doctor.model.ChatHead;
 import com.works.adeogo.doctor.model.Question;
+import com.works.adeogo.doctor.utils.NetworkUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -106,18 +107,22 @@ public class ListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             c.setTimeInMillis(unixTime);//set your saved timestamp
             String that_day=String.format("%te %B %tY",c,c,c); //this will convert timestamp into format like 22 February 2012
-            DateFormat df;
 
-            if (TextUtils.equals(cur_day, that_day)){
-                df = new SimpleDateFormat("HH:mm:ss");
-            }else {
-                df = new SimpleDateFormat("MM/dd/yyyy");
+            Calendar timeToCheck = Calendar.getInstance();
+            timeToCheck.setTimeInMillis(unixTime);
+
+            if(c.get(Calendar.YEAR) == timeToCheck.get(Calendar.YEAR)) {
+                if(c.get(Calendar.DAY_OF_YEAR) == timeToCheck.get(Calendar.DAY_OF_YEAR)){
+                    String nowDate = NetworkUtils.getTimeFromUnix(chatHead.getUnixTime());
+                    ((ListAdapterViewHolder) holder).mDateTextView.setText(nowDate);
+                } else {
+                    String nowDate = NetworkUtils.convertUnix(chatHead.getUnixTime());
+                    ((ListAdapterViewHolder) holder).mDateTextView.setText(nowDate);
+                }
+
             }
 
             java.util.Date time = new java.util.Date((long)unixTime);
-            String shownDate = df.format(time);
-            ((ListAdapterViewHolder) holder).mDateTextView.setText(shownDate);
-
 
             ((ListAdapterViewHolder) holder).mNameTextView.setText(Title);
         }

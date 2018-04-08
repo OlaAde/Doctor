@@ -377,7 +377,7 @@
                 <ImageView
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    app:srcCompat="@drawable/profile_black"/>
+                    app:srcCompat="@drawable/profile_black_full"/>
 
                 <TextView
                     android:layout_marginLeft="15dp"

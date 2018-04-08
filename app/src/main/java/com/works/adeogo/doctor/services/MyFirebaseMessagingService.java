@@ -12,8 +12,8 @@ import android.text.TextUtils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.works.adeogo.doctor.NavigationStartActivity;
-import com.works.adeogo.doctor.QuestionActivity;
 import com.works.adeogo.doctor.R;
+import com.works.adeogo.doctor.TestChatActivity;
 
 import java.util.Map;
 
@@ -29,38 +29,37 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String UID = "uid";
     private static final String TEXT = "text";
     private static final String TYPE = "type";
+    private static final String WHICH = "which";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
-        if (remoteMessage.getData().size() > 0)
-        {
+        if (remoteMessage.getData().size() > 0) {
             Map<String, String> data = remoteMessage.getData();
 
             String username = data.get(USERNAME);
             String uid = data.get(UID);
             String text = data.get(TEXT);
             String type = data.get(TYPE);
-
-
-
+            String which = data.get(WHICH);
+            String imageUrl = data.get(IMAGEURL);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
             mBuilder.setSmallIcon(R.drawable.icon_doctor);
 
-            mBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+            mBuilder.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000});
 
             //LED
             mBuilder.setLights(Color.RED, 3000, 3000);
             mBuilder.setContentTitle(username);
             mBuilder.setContentText(text);
 
-
             Intent resultIntent = null;
 
-            if (TextUtils.equals(type, "0")){
+            if (TextUtils.equals(type, "0")) {
 
-                resultIntent = new Intent(this, QuestionActivity.class);
+                resultIntent = new Intent(this, TestChatActivity.class);
+                resultIntent.putExtra("which", Integer.parseInt(which));
+                resultIntent.putExtra("client_picture", imageUrl);
                 resultIntent.putExtra("client_id", uid);
                 resultIntent.putExtra("client_name", username);
 
@@ -68,6 +67,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                 stackBuilder.addNextIntent(resultIntent);
                 PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
                 mBuilder.setContentIntent(resultPendingIntent);
 
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -75,7 +75,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 Notification notification = mBuilder.build();
                 notification.flags = Notification.FLAG_AUTO_CANCEL;
                 mNotificationManager.notify(0, notification);
-            } else if (TextUtils.equals(type, "1")){
+            } else if (TextUtils.equals(type, "1")) {
 
                 resultIntent = new Intent(this, NavigationStartActivity.class);
                 resultIntent.putExtra("start", true);

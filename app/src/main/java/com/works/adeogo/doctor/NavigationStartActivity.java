@@ -46,6 +46,7 @@ import com.squareup.picasso.Picasso;
 import com.works.adeogo.doctor.model.DoctorProfile;
 
 import io.fabric.sdk.android.Fabric;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,15 +82,22 @@ public class NavigationStartActivity extends AppCompatActivity
     private FragmentManager mFragmentManager;
     private ActionBar mActionBar;
 
+    private HomeFragment homeFragment;
+    private MessagesFragment messagesFragment;
+    private AppointmentFragment appointmentFragment;
+    private CollaborateFragment collaborateFragment;
+    private ProfileFragment profileFragment;
+
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Fabric.with(this, new Crashlytics(), new CrashlyticsNdk());
+
         setContentView(R.layout.activity_navigation_start);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         mActionBar = getSupportActionBar();
         mFragmentManager = getSupportFragmentManager();
@@ -103,7 +111,6 @@ public class NavigationStartActivity extends AppCompatActivity
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
 
-
         View headerLayout = mNavigationView.getHeaderView(0); // 0-index header
 
         mProfileImageView = headerLayout.findViewById(R.id.imageView);
@@ -115,6 +122,8 @@ public class NavigationStartActivity extends AppCompatActivity
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseDatabase = FirebaseDatabase.getInstance();
 
+        CreateFragments();
+
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -123,41 +132,44 @@ public class NavigationStartActivity extends AppCompatActivity
                     // User is signed in
                     userId = user.getUid();
                     FirebaseMessaging.getInstance().subscribeToTopic(userId);
-                    mAllDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" + "all_profiles/" + userId );
+                    mAllDatabaseReference = mFirebaseDatabase.getReference().child("new_doctors/" + "all_profiles/" + userId);
                     mDeleteDatabaseReference = mFirebaseDatabase.getReference().child("deleted").child("doctors").child(userId);
                     onSignedInInitialize(user.getDisplayName());
                 } else {
                     // User is signed out
-                    Intent intent = new Intent(NavigationStartActivity.this, ActivityRegister.class);
+                    Intent intent = new Intent(NavigationStartActivity.this, LoginActivity.class);
                     startActivity(intent);
                 }
             }
         };
 
-
-
-
         Intent intent = getIntent();
         mStart = intent.getBooleanExtra("start", false);
 
-        if (mStart){
+        if (mStart) {
             mActionBar.setTitle(R.string.action_appointments);
             mNavigationView.getMenu().getItem(1).setChecked(true);
             AppointmentFragment appointmentFragment = new AppointmentFragment();
             mFragmentManager.beginTransaction()
                     .add(R.id.fragment_frame, appointmentFragment)
                     .commit();
-        }else {
-            mActionBar.setTitle(R.string.action_messages);
+        } else {
+            mActionBar.setTitle(R.string.action_home);
             mNavigationView.getMenu().getItem(0).setChecked(true);
-            MessagesFragment messagesFragment = new MessagesFragment();
             mFragmentManager.beginTransaction()
-                    .add(R.id.fragment_frame, messagesFragment)
+                    .add(R.id.fragment_frame, homeFragment)
                     .commit();
         }
 
     }
 
+    private void CreateFragments(){
+        homeFragment = new HomeFragment();
+        messagesFragment = new MessagesFragment();
+        appointmentFragment = new AppointmentFragment();
+        collaborateFragment = new CollaborateFragment();
+        profileFragment = new ProfileFragment();
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -191,33 +203,37 @@ public class NavigationStartActivity extends AppCompatActivity
             mChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    if (TextUtils.equals(dataSnapshot.getKey(), "email")){
+                    if (TextUtils.equals(dataSnapshot.getKey(), "email")) {
                         mEmail = dataSnapshot.getValue(String.class);
-                    }
-                    else if (TextUtils.equals(dataSnapshot.getKey(), "password")){
+                    } else if (TextUtils.equals(dataSnapshot.getKey(), "password")) {
                         mPassword = dataSnapshot.getValue().toString();
-                    }
-                    else if (TextUtils.equals(dataSnapshot.getKey(), "pictureUrl")){
+                    } else if (TextUtils.equals(dataSnapshot.getKey(), "pictureUrl")) {
                         mPictureUrl = dataSnapshot.getValue().toString();
-                                Picasso.with(NavigationStartActivity.this)
+                        Picasso.with(NavigationStartActivity.this)
                                 .load(mPictureUrl)
                                 .resize(500, 500)
                                 .centerCrop()
                                 .into(mProfileImageView);
-                    }
-                    else if (TextUtils.equals(dataSnapshot.getKey(), "name")){
+                    } else if (TextUtils.equals(dataSnapshot.getKey(), "name")) {
                         mName = dataSnapshot.getValue().toString();
                         mNameTextView.setText(mName);
-                    }
-                    else if (TextUtils.equals(dataSnapshot.getKey(), "speciality")){
+                    } else if (TextUtils.equals(dataSnapshot.getKey(), "speciality")) {
                         mSpeciality = dataSnapshot.getValue().toString();
                         mSpecialityTextview.setText(mSpeciality);
                     }
                 }
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
-                public void onChildRemoved(DataSnapshot dataSnapshot) {}
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-                public void onCancelled(DatabaseError databaseError) {}
+
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+                }
+
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                }
+
+                public void onCancelled(DatabaseError databaseError) {
+                }
             };
             mAllDatabaseReference.addChildEventListener(mChildEventListener);
         }
@@ -271,28 +287,30 @@ public class NavigationStartActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.action_messages) {
+        if (id == R.id.action_home) {
+            mActionBar.setTitle(R.string.action_home);
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_frame, homeFragment)
+                    .commit();
+
+        } else if (id == R.id.action_messages) {
             mActionBar.setTitle(R.string.action_messages);
-            MessagesFragment messagesFragment = new MessagesFragment();
             mFragmentManager.beginTransaction()
                     .replace(R.id.fragment_frame, messagesFragment)
                     .commit();
 
         } else if (id == R.id.action_appointments) {
             mActionBar.setTitle(R.string.action_appointments);
-            AppointmentFragment appointmentFragment = new AppointmentFragment();
             mFragmentManager.beginTransaction()
                     .replace(R.id.fragment_frame, appointmentFragment)
                     .commit();
         } else if (id == R.id.action_profile) {
             mActionBar.setTitle(R.string.action_profile);
-            ProfileFragment profileFragment = new ProfileFragment();
             mFragmentManager.beginTransaction()
                     .replace(R.id.fragment_frame, profileFragment)
                     .commit();
         } else if (id == R.id.action_collaborate) {
             mActionBar.setTitle(R.string.action_collaborate);
-            CollaborateFragment collaborateFragment = new CollaborateFragment();
             mFragmentManager.beginTransaction()
                     .replace(R.id.fragment_frame, collaborateFragment)
                     .commit();
@@ -324,7 +342,7 @@ public class NavigationStartActivity extends AppCompatActivity
                         public void onClick(DialogInterface dialogInterface, int i) {
                             final android.app.AlertDialog waitingDialog = new SpotsDialog(NavigationStartActivity.this);
                             waitingDialog.show();
-
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic(userId);
                             final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -332,7 +350,7 @@ public class NavigationStartActivity extends AppCompatActivity
                             ref.child("new_doctors").child("all_profiles").child(userId).removeValue();
                             mDeleteDatabaseReference.push().setValue(userId);
                             AuthCredential credential = EmailAuthProvider
-                                    .getCredential(mEmail ,mPassword);
+                                    .getCredential(mEmail, mPassword);
 
                             // Prompt the user to re-provide their sign-in credentials
                             user.reauthenticate(credential)
@@ -352,7 +370,8 @@ public class NavigationStartActivity extends AppCompatActivity
                                                                 Snackbar.make(mMainLayout, "Account deleted!", Snackbar.LENGTH_LONG).show();
                                                                 mFirebaseAuth.signOut();
                                                                 Intent intent = new Intent(NavigationStartActivity.this, LoginActivity.class);
-                                                                startActivity(intent);                                                            }
+                                                                startActivity(intent);
+                                                            }
                                                         }
                                                     });
 
@@ -374,6 +393,8 @@ public class NavigationStartActivity extends AppCompatActivity
             alertDialog.setNegativeButton("Logout", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(userId);
                     mFirebaseAuth.signOut();
                     Intent intent = new Intent(NavigationStartActivity.this, LoginActivity.class);
                     startActivity(intent);

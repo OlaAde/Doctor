@@ -8,9 +8,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/icon_doctor"
+        android:icon="@drawable/new_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/icon_doctor"
+        android:roundIcon="@drawable/new_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -20,11 +20,8 @@
             android:theme="@style/LoginTheme" />
         <activity
             android:name=".QuestionActivity"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:parentActivityName=".NavigationStartActivity" />
-        <activity
-            android:name=".ActivityRegister"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".services.MyFirebaseMessagingService">
             <intent-filter>
@@ -52,13 +49,15 @@
         <activity
             android:name=".NavigationStartActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="370e4b0fb4b72bc94add262f681921bd88d14b8b" />
 
-        <activity android:name=".AboutActivity" />
+        <activity
+            android:name=".AboutActivity"
+            android:parentActivityName=".NavigationStartActivity" />
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
@@ -68,7 +67,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ThanksActivity"></activity>
+        <activity android:name=".ThanksActivity" />
+        <activity
+            android:name=".RegistrationActivity"
+            android:parentActivityName=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".TestChatActivity"
+            android:theme="@style/BlueTheme"></activity>
+        <activity android:name=".TestingActivity"></activity>
     </application>
 
 </manifest>
